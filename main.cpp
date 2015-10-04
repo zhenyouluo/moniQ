@@ -12,7 +12,7 @@
 int main(int argc, char *argv[])
 {
   QCoreApplication a(argc, argv);
-  QCoreApplication::addLibraryPath("C:\\Users\\Aise\\Documents\\build-pingwin-msvc2013_64-Debug\\debug");
+  QCoreApplication::addLibraryPath("C:\\Users\\Aise\\Documents\\build-moniQ-msvc2013_64-Debug\\debug");
 
 
   QPluginLoader pl("pingwin");
@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
   PingerInterface* pi = qobject_cast<PingerInterface *>(qp);
   if (pi)
   {
-    qDebug() << "true "<< pi->ping("test");
+    qDebug() << "true "<< pi->ping("192.168.1.150");
   }
   else
   {

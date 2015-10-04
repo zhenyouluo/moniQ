@@ -4,6 +4,8 @@
 #
 #-------------------------------------------------
 
+include(pingwin/pingwin.pri)
+
 QT       += core
 
 QT       -= gui
@@ -17,8 +19,10 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp \
-    tcpscanner.cpp
+    tcpscanner.cpp \
 
 HEADERS += \
     tcpscanner.h \
-    pingerinterface.h
+    pingerinterface.h \
+
+
