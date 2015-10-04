@@ -7,10 +7,17 @@
 
 #include <QObject>
 #include "networkdiscoverer.h"
+#include "ipv4_address.h"
 
 int main(int argc, char *argv[])
 {
   QCoreApplication a(argc, argv);
+  Ipv4_Address* ip4 = new Ipv4_Address(QString("215.214.213.212"));
+  quint32 qu = ip4->toInt();
+  qDebug() << qu;
+  ip4 = new Ipv4_Address(qu);
+  qDebug() << ip4->toString();
+  return 0;
   NetworkDiscoverer* networkdiscoverer = new NetworkDiscoverer();
 
 
