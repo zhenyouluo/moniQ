@@ -4,38 +4,15 @@
 #include <QtSql/QSqlDriver>
 #include <QtSql/QSqlQuery>
 #include <QDebug>
-#include <QPluginLoader>
+
 #include <QObject>
-#include "tcpscanner.h"
-#include "pingerinterface.h"
+#include "networkdiscoverer.h"
 
 int main(int argc, char *argv[])
 {
   QCoreApplication a(argc, argv);
-  QCoreApplication::addLibraryPath("C:\\Users\\Aise\\Documents\\build-moniQ-msvc2013_64-Debug\\debug");
+  NetworkDiscoverer* networkdiscoverer = new NetworkDiscoverer();
 
-
-  QPluginLoader pl("pingwin");
-  QObject *qp = pl.instance();
-  if (qp)
-  {
-    qDebug() << "qp true ";
-  }
-  else
-  {
-    qDebug() << "qp is false ";
-  }
-  PingerInterface* pi = qobject_cast<PingerInterface *>(qp);
-  if (pi)
-  {
-    qDebug() << "true "<< pi->ping("192.168.1.150");
-  }
-  else
-  {
-    qDebug() << "is false ";
-  }
-
-  TcpScanner* tcpscanner = new TcpScanner(&a);
 
   QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
      db.setHostName("localhost");

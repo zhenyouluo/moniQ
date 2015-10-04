@@ -19,10 +19,14 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp \
-    tcpscanner.cpp \
+    networkdiscoverer.cpp \
+    pinger.cpp \
+    ipv4_address.cpp
 
 HEADERS += \
-    tcpscanner.h \
     pingerinterface.h \
+    networkdiscoverer.h \
+    pinger.h \
+    ipv4_address.h
 
 
