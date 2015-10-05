@@ -21,12 +21,16 @@ TEMPLATE = app
 SOURCES += main.cpp \
     networkdiscoverer.cpp \
     pinger.cpp \
-    ipv4_address.cpp
+    ipv4_address.cpp \
+    networkreader.cpp \
+    objectinstances.cpp
 
 HEADERS += \
     pingerinterface.h \
     networkdiscoverer.h \
     pinger.h \
-    ipv4_address.h
+    ipv4_address.h \
+    networkreader.h \
+    objectinstances.h
 
 
