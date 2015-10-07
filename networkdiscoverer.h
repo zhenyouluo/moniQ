@@ -10,6 +10,7 @@ class NetworkDiscoverer : public QObject
   Q_OBJECT
 public:
   explicit NetworkDiscoverer(QObject *parent = 0);
+  bool pingIPs();
 
 signals:
 

@@ -9,15 +9,15 @@
 #include "networkdiscoverer.h"
 #include "networkreader.h"
 #include "ipv4_address.h"
+#include "objectinstances.h"
+#include "chatserver.h"
 
 int main(int argc, char *argv[])
 {
   QCoreApplication a(argc, argv);
+  //ChatServer server(1234);
 
-  // create needed instances
-  //NetworkDiscoverer* networkdiscoverer = new NetworkDiscoverer();
-  NetworkReader* networkreader = new NetworkReader();
-
+  ObjectInstances::commandServer.start();
 
   Ipv4_Address* ip4 = new Ipv4_Address(QString("215.214.213.212"));
   quint32 qu = ip4->toInt();

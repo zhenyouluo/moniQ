@@ -7,6 +7,7 @@
 include(pingwin/pingwin.pri)
 
 QT       += core
+QT       += websockets
 
 QT       -= gui
 QT += sql
@@ -23,7 +24,9 @@ SOURCES += main.cpp \
     pinger.cpp \
     ipv4_address.cpp \
     networkreader.cpp \
-    objectinstances.cpp
+    objectinstances.cpp \
+    commandserver.cpp \
+    chatserver.cpp
 
 HEADERS += \
     pingerinterface.h \
@@ -31,6 +34,8 @@ HEADERS += \
     pinger.h \
     ipv4_address.h \
     networkreader.h \
-    objectinstances.h
+    objectinstances.h \
+    commandserver.h \
+    chatserver.h
 
 

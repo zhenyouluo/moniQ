@@ -47,6 +47,7 @@ void NetworkReader::readPendingDatagrams()
     {
       quint8 arglen = datagram[pos];
       QByteArray arg = datagram.mid(pos+1, arglen);
+      qDebug() << arglen << arg;
       if (arg.size() < arglen)
       {
         udpSocket->writeDatagram(QByteArray(1, 2), sender, senderPort);  // response 2: argument not fully read
@@ -54,6 +55,7 @@ void NetworkReader::readPendingDatagrams()
         return;
       }
       arguments.append(arg);
+      pos = pos + arglen + 1;
     }
 
     switch (command_id)
