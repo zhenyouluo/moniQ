@@ -6,9 +6,12 @@
 
 TEMPLATE = subdirs
 
-SUBDIRS += \
-    pingwin \
-    main.pro
+SUBDIRS += main.pro
+
+win32
+{
+  SUBDIRS +=pingwin
+}
 
 
 

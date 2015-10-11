@@ -139,13 +139,13 @@ QString CommandServer::respondToCommand(QString command, QStringList arguments)
   if (command == "SET_DATABASE_USER")
   {
     ObjectInstances::databaseCredentials.setValue("database_user", arguments[0]);
-
+    ObjectInstances::database.start(false);
     return "";
   }
   if (command == "SET_DATABASE_PASSWORD")
   {
     ObjectInstances::databaseCredentials.setValue("database_password", arguments[0]);
-
+    ObjectInstances::database.start(false);
     return "";
   }
   if (command == "NETWORKDISCOVER")

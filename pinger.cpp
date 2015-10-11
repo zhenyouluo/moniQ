@@ -11,7 +11,7 @@ Pinger::Pinger(QString ip_address)
 
 void Pinger::run()
 {
-  qDebug() << ipAddress;
+  //qDebug() << ipAddress;
   QPluginLoader pl("pingwin");
   QObject *qp = pl.instance();
   if (!qp)

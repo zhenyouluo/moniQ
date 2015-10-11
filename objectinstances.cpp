@@ -10,5 +10,5 @@ ObjectInstances::ObjectInstances(QObject *parent) : QObject(parent)
 // declare needed instances
 NetworkDiscoverer ObjectInstances::networkDiscoverer;
 CommandServer ObjectInstances::commandServer;
-ChatServer* ObjectInstances::server= new ChatServer(1234);
+Database ObjectInstances::database;
 QSettings ObjectInstances::databaseCredentials(QSettings::SystemScope, "tools4all", "moniQ");

@@ -68,13 +68,18 @@ int Pingwin::ping(char *ip)
                               break;
                           }
                       }
-                      int result = decode_reply(recv_buf, packet_size, &source);
-                      if (result == 0) {
-                          return 0;
-                      }
-                      if (result == -1) {
+
+                        int result = decode_reply(recv_buf, packet_size, &source);
+                        if (result == 0) {
+                          qDebug() << recv_buf;
+                            return 0;
+                        }
+                        if (result == -1) {
                           return 2;
-                      }
+                        }
+
+
+
                   }
               }
 
@@ -83,7 +88,7 @@ int Pingwin::ping(char *ip)
               delete[]recv_buf;
               WSACleanup();
 
-  return false;
+  return 3;
 }
 
 //////////////////////////// setup_for_ping ////////////////////////////
@@ -201,8 +206,8 @@ int Pingwin::send_ping(SOCKET sd, const sockaddr_in& dest, ICMPHeader* send_buf,
         int packet_size)
 {
     // Send the ping packet in send_buf as-is
-    qDebug() << "Sending " << packet_size << " bytes to " <<
-            inet_ntoa(dest.sin_addr) << "..." << flush;
+    //qDebug() << "Sending " << packet_size << " bytes to " <<
+    //        inet_ntoa(dest.sin_addr) << "..." << flush;
     int bwrote = sendto(sd, (char*)send_buf, packet_size, 0,
             (sockaddr*)&dest, sizeof(dest));
     if (bwrote == SOCKET_ERROR) {
@@ -210,7 +215,7 @@ int Pingwin::send_ping(SOCKET sd, const sockaddr_in& dest, ICMPHeader* send_buf,
         return -1;
     }
     else if (bwrote < packet_size) {
-        qDebug() << "sent " << bwrote << " bytes..." << flush;
+        //qDebug() << "sent " << bwrote << " bytes..." << flush;
     }
 
     return 0;
@@ -268,7 +273,7 @@ int Pingwin::decode_reply(IPHeader* reply, int bytes, sockaddr_in* from)
     else if (icmphdr->type != ICMP_ECHO_REPLY) {
         if (icmphdr->type != ICMP_TTL_EXPIRE) {
             if (icmphdr->type == ICMP_DEST_UNREACH) {
-                qDebug() << "Destination unreachable";
+                //qDebug() << "Destination unreachable";
             }
             else {
                 qDebug() << "Unknown ICMP packet type " << int(icmphdr->type) <<
@@ -298,16 +303,16 @@ int Pingwin::decode_reply(IPHeader* reply, int bytes, sockaddr_in* from)
     }
 
     // Okay, we ran the gamut, so the packet must be legal -- dump it
-    qDebug() << bytes << " bytes from " <<
-            inet_ntoa(from->sin_addr) << ", icmp_seq " <<
-            icmphdr->seq << ", ";
+    //qDebug() << bytes << " bytes from " <<
+    //        inet_ntoa(from->sin_addr) << ", icmp_seq " <<
+    //        icmphdr->seq << ", ";
     if (icmphdr->type == ICMP_TTL_EXPIRE) {
-        qDebug() << "TTL expired.";
+    //    qDebug() << "TTL expired.";
     }
     else {
-        qDebug() << nHops << " hop" << (nHops == 1 ? "" : "s");
-        qDebug() << ", time: " << (GetTickCount() - icmphdr->timestamp) <<
-                " ms.";
+    //    qDebug() << nHops << " hop" << (nHops == 1 ? "" : "s");
+    //    qDebug() << ", time: " << (GetTickCount() - icmphdr->timestamp) <<
+    //            " ms.";
     }
 
     return 0;

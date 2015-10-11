@@ -6,7 +6,7 @@
 
 #include "networkdiscoverer.h"
 #include "commandserver.h"
-#include "chatserver.h"
+#include "database.h"
 
 // Class containing static instances of all objects for which we need exactly one instance
 
@@ -17,7 +17,7 @@ public:
   explicit ObjectInstances(QObject *parent = 0);
   static NetworkDiscoverer networkDiscoverer;
   static CommandServer commandServer;
-  static ChatServer* server;
+  static Database database;
   static QSettings databaseCredentials;
 signals:
 

@@ -25,7 +25,7 @@ SOURCES += main.cpp \
     networkreader.cpp \
     objectinstances.cpp \
     commandserver.cpp \
-    chatserver.cpp
+    database.cpp
 
 HEADERS += \
     pingerinterface.h \
@@ -35,7 +35,9 @@ HEADERS += \
     networkreader.h \
     objectinstances.h \
     commandserver.h \
-    chatserver.h
+    database.h
+
+DISTFILES +=
 
 
 
