@@ -2,6 +2,10 @@
 #include <QDebug>
 #include "ipv4_address.h"
 
+Ipv4_Address::Ipv4_Address(QObject *parent) : QObject(parent)
+{
+}
+
 Ipv4_Address::Ipv4_Address(QString address_string, QObject *parent) : QObject(parent)
 {
   validAddress = false;

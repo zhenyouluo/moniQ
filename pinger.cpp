@@ -27,6 +27,6 @@ void Pinger::run()
     emit sendPingResult(ipAddress, -2);
     return;
   }
-  int result = pi->ping("192.168.1.151");
+  int result = pi->ping(ipAddress.toLatin1().data());
   emit sendPingResult(ipAddress, result);
 }

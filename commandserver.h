@@ -19,6 +19,7 @@ private Q_SLOTS:
     void onNewConnection();
     void processMessage(QString message);
     void socketDisconnected();
+    QString respondToCommand(QString command, QStringList arguments);
 
 private:
     QWebSocketServer *m_pWebSocketServer;

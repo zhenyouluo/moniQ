@@ -12,7 +12,8 @@ private:
   bool validAddress;
 
 public:
-  explicit Ipv4_Address(QString address_string, QObject *parent = 0);
+  explicit Ipv4_Address(QObject *parent = 0);
+  Ipv4_Address(QString address_string, QObject *parent = 0);
   Ipv4_Address(quint32 address_int, QObject *parent = 0);
   bool isValid();
   QString toString();

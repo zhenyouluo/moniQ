@@ -7,7 +7,7 @@
 #include <ws2tcpip.h>
 #include <iostream>
 #include "pingwin_global.h"
-#include "../moniQ/pingerinterface.h"
+#include "../pingerinterface.h"
 #define WIN32_LEAN_AND_MEAN
 #include <winsock2.h>
 

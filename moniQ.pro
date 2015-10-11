@@ -4,38 +4,11 @@
 #
 #-------------------------------------------------
 
-include(pingwin/pingwin.pri)
+TEMPLATE = subdirs
 
-QT       += core
-QT       += websockets
+SUBDIRS += \
+    pingwin \
+    main.pro
 
-QT       -= gui
-QT += sql
-QT += network
-TARGET = moniQ
-CONFIG   += console
-CONFIG   -= app_bundle
-
-TEMPLATE = app
-
-
-SOURCES += main.cpp \
-    networkdiscoverer.cpp \
-    pinger.cpp \
-    ipv4_address.cpp \
-    networkreader.cpp \
-    objectinstances.cpp \
-    commandserver.cpp \
-    chatserver.cpp
-
-HEADERS += \
-    pingerinterface.h \
-    networkdiscoverer.h \
-    pinger.h \
-    ipv4_address.h \
-    networkreader.h \
-    objectinstances.h \
-    commandserver.h \
-    chatserver.h
 
 

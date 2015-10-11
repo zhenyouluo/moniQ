@@ -3,7 +3,7 @@
 
 #include <QString>
 
-#define PingerInterface_iid "nl.pikestjelp.moniQ.PingerInterface"
+#define PingerInterface_iid "nl.tools4all.moniQ.PingerInterface"
 
 class PingerInterface
 {

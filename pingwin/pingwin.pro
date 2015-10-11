@@ -11,9 +11,9 @@ TEMPLATE = lib
 
 DEFINES += PINGWIN_LIBRARY
 
-SOURCES += pingwin/pingwin.cpp
+SOURCES += pingwin.cpp
 
-HEADERS += pingwin/pingwin.h\
-        pingwin/pingwin_global.h
+HEADERS += pingwin.h\
+        pingwin_global.h
 LIBS +=  -lws2_32
 

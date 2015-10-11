@@ -1,3 +1,5 @@
+#include <QSettings>
+
 #include "objectinstances.h"
 
 ObjectInstances::ObjectInstances(QObject *parent) : QObject(parent)
@@ -5,7 +7,8 @@ ObjectInstances::ObjectInstances(QObject *parent) : QObject(parent)
 
 }
 
-// create needed instances
-NetworkDiscoverer* ObjectInstances::networkDiscoverer = new NetworkDiscoverer();
+// declare needed instances
+NetworkDiscoverer ObjectInstances::networkDiscoverer;
 CommandServer ObjectInstances::commandServer;
 ChatServer* ObjectInstances::server= new ChatServer(1234);
+QSettings ObjectInstances::databaseCredentials(QSettings::SystemScope, "tools4all", "moniQ");
