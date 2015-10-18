@@ -4,17 +4,19 @@
 #include <QObject>
 
 #include "ipv4_address.h"
+#include "pingthreadcontrol.h"
 
-#define MAX_NETWORKDISCOVERER_THREADS 10
+#define MAX_CONCURRENT_PINGS 20
+#define PING_CHECK_INTERVAL 1000 // in msec
 
 class NetworkDiscoverer : public QObject
 {
   Q_OBJECT
 
 private:
-  quint32 startIp;
   quint32 endIp;
   quint32 curr_ip;
+  PingThreadControl* pingThreadControls[MAX_CONCURRENT_PINGS];
 
 public:
   explicit NetworkDiscoverer(QObject *parent = 0);
@@ -23,7 +25,7 @@ public:
 signals:
 
 public slots:
-    void processPingResult(QString ip_address, int result);
+    void getPingResult();
 };
 
 #endif // NETWORKDISCOVERER_H

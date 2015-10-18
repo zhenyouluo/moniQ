@@ -25,7 +25,8 @@ SOURCES += main.cpp \
     networkreader.cpp \
     objectinstances.cpp \
     commandserver.cpp \
-    database.cpp
+    database.cpp \
+    pingthreadcontrol.cpp
 
 HEADERS += \
     pingerinterface.h \
@@ -35,7 +36,8 @@ HEADERS += \
     networkreader.h \
     objectinstances.h \
     commandserver.h \
-    database.h
+    database.h \
+    pingthreadcontrol.h
 
 DISTFILES +=
 

@@ -20,6 +20,11 @@
 // Minimum ICMP packet size, in bytes
 #define ICMP_MIN 8
 
+#define PACKET_SIZE 32
+#define DEFAULT_TTL 30
+#define MAX_PING_DATA_SIZE 1024
+#define MAX_PING_PACKET_SIZE 1036
+
 // The following two structures need to be packed tightly, but unlike
 // Borland C++, Microsoft C++ does not do this by default.
 #pragma pack(1)
@@ -54,19 +59,27 @@ struct ICMPHeader {
 
 class PINGWINSHARED_EXPORT Pingwin: public QObject, public PingerInterface
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID PingerInterface_iid)
-    Q_INTERFACES(PingerInterface)
+  Q_OBJECT
+  Q_PLUGIN_METADATA(IID PingerInterface_iid)
+  Q_INTERFACES(PingerInterface)
+
+private:
+  WSAData wsaData;
+  bool valid;
+  SOCKET sd;
+  sockaddr_in dest, source;
+  int ttl;
+  int max_ping_packet_size;
+  char send_buf[PACKET_SIZE];
+  char recv_buf[MAX_PING_PACKET_SIZE];
 
 public:
   Pingwin();
+  ~Pingwin();
+  int get_ping_result();
+  bool isValid();
   int ping(char *);
-  int setup_for_ping(char* host, int ttl, SOCKET& sd, sockaddr_in& dest);
   USHORT ip_checksum(USHORT* buffer, int size);
-  void init_ping_packet(ICMPHeader* icmp_hdr, int packet_size, int seq_no);
-  int decode_reply(IPHeader* reply, int bytes, sockaddr_in* from);
-  int recv_ping(SOCKET sd, sockaddr_in& source, IPHeader* recv_buf,int packet_size);
-  int send_ping(SOCKET sd, const sockaddr_in& dest, ICMPHeader* send_buf,int packet_size);
 };
 
 #endif // PINGWIN_H

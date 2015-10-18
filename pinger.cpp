@@ -1,32 +1,50 @@
 #include <QDebug>
 #include <QPluginLoader>
+#include <QThread>
 
 #include "pinger.h"
 #include "pingerinterface.h"
 
-Pinger::Pinger(QString ip_address)
+Pinger::Pinger(Ipv4_Address ip_address)
 {
   ipAddress = ip_address;
 }
 
 void Pinger::run()
 {
-  //qDebug() << ipAddress;
-  QPluginLoader pl("pingwin");
-  QObject *qp = pl.instance();
-  if (!qp)
+  pluginLoader = new QPluginLoader("pingwin");
+  pingerPlugin = pluginLoader->instance();
+  if (!pingerPlugin)
   {
     qDebug() << "Could not instantiate pinger plugin";
-    emit sendPingResult(ipAddress, -1);
+    emit sendPingResult(-1);
     return;
   }
-  PingerInterface* pi = qobject_cast<PingerInterface *>(qp);
-  if (!pi)
+  pingerInterface = qobject_cast<PingerInterface *>(pingerPlugin);
+  if (!pingerInterface)
   {
     qDebug() << "Could not type cast pinger plugin";
-    emit sendPingResult(ipAddress, -2);
+    emit sendPingResult(-2);
     return;
   }
-  int result = pi->ping(ipAddress.toLatin1().data());
-  emit sendPingResult(ipAddress, result);
+  if (!pingerInterface->isValid())
+  {
+    emit sendPingResult(-3);
+    return;
+  }
+  int result = pingerInterface->ping(ipAddress.toString().toLatin1().data());
+  if (result != 0)
+  {
+    emit sendPingResult(result);
+    return;
+  }
+
+  QThread::sleep(2);
+  int result = pingerInterface->get_ping_result();
+  emit sendPingResult(result);
+}
+
+void stopEventLoop()
+{
+  QThread::currentThread()->exit();
 }

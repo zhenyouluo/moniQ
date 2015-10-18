@@ -3,61 +3,61 @@
 #include <QDebug>
 #include <QThreadPool>
 
+
 #include "networkdiscoverer.h"
 #include "ipv4_address.h"
 #include "pinger.h"
 #include "objectinstances.h"
+#include "pingerinterface.h"
 
 NetworkDiscoverer::NetworkDiscoverer(QObject *parent) : QObject(parent)
 {
   QCoreApplication::addLibraryPath("C:\\Users\\Aise\\Documents\\build-moniQ-msvc2013_64-Debug\\pingwin\\debug");
-  qRegisterMetaType<QString>("QString&");
 }
 
 void NetworkDiscoverer::pingIpv4Range(Ipv4_Address* start_ip, Ipv4_Address* end_ip)
 {
-  startIp = start_ip->toInt();
+  QThreadPool::setMaxThreadCount(MAX_CONCURRENT_PINGS);
+
+  for (int i = 0; i < MAX_CONCURRENT_PINGS; i++)
+  {
+    pingThreadControls[i] = new PingThreadControl();
+  }
+
+  curr_ip = start_ip->toInt();
   endIp = end_ip->toInt();
 
-  curr_ip = startIp;
-
-  // ping is blocking, so use mutiple threads
-  QThreadPool::globalInstance()->setMaxThreadCount(MAX_NETWORKDISCOVERER_THREADS);
-  while ((QThreadPool::globalInstance()->activeThreadCount() < QThreadPool::globalInstance()->maxThreadCount()) &&
-         (curr_ip <= endIp))
+  // start pinging
+  int index = 0;
+  while ((index < MAX_CONCURRENT_PINGS) && (curr_ip <= endIp))
   {
-    Pinger* pinger = new Pinger(Ipv4_Address(curr_ip).toString());
-    QObject::connect(pinger, &Pinger::sendPingResult, this, &NetworkDiscoverer::processPingResult);
-    QThreadPool::globalInstance()->start(pinger);
+    pingThreadControls[index]->startPing(Ipv4_Address(curr_ip), index);
     curr_ip++;
+    index++;
   }
 }
 
- void NetworkDiscoverer::processPingResult(QString ip_address, int result)
+void NetworkDiscoverer::processPingResult(Ipv4_Address ip_address, int result, int index)
 {
-  if (result < 0)
-  {
-    // loading pinger plugin failed, try for same ip address again
-    Pinger* pinger = new Pinger(ip_address);
-    QObject::connect(pinger, &Pinger::sendPingResult, this, &NetworkDiscoverer::processPingResult);
-    QThreadPool::globalInstance()->start(pinger);
-  }
   if (result == 0)
   {
     // add to database
-    ObjectInstances::database.addHost(ip_address);
-    qDebug() << ip_address << ":" << result;
+    ObjectInstances::database.addHost(ip_address.toString());
+    qDebug() << ip_address.toString() << ":" << result;
   }
   else
   {
     // log result
-    qDebug() << ip_address << ":" << result;
+    qDebug() << ip_address.toString() << ":" << result;
   }
+
   if (curr_ip <= endIp)
   {
-    Pinger* pinger = new Pinger(Ipv4_Address(curr_ip).toString());
-    QObject::connect(pinger, &Pinger::sendPingResult, this, &NetworkDiscoverer::processPingResult);
-    QThreadPool::globalInstance()->start(pinger);
+    pingThreadControls[index]->startPing(Ipv4_Address(curr_ip), index);
     curr_ip++;
+  }
+  else
+  {
+    pingThreadControls[index]->deleteLater();
   }
 }

@@ -4,20 +4,30 @@
 #include <QString>
 #include <QRunnable>
 #include <QObject>
+#include <QPluginLoader>
+
+#include "ipv4_address.h"
+#include "pingerinterface.h"
 
 class Pinger : public QObject, public QRunnable
 {
   Q_OBJECT
 
 private:
-  QString ipAddress;
+  Ipv4_Address ipAddress;
+  QPluginLoader* pluginLoader;
+  QObject* pingerPlugin;
+  PingerInterface* pingerInterface;
 
 public:
-  Pinger(QString ip_address);
+  Pinger(Ipv4_Address ip_address);
   void run();
 
+public slots:
+  void stopEventLoop();
+
 signals:
-   void sendPingResult(QString ip_address, int result);
+   void sendPingResult(int result);
 };
 
 #endif // PINGER_H
