@@ -7,6 +7,7 @@
 
 int main(int argc, char *argv[])
 {
+  qRegisterMetaType<QString>("QString");
   QCoreApplication a(argc, argv);
 
   ObjectInstances::commandServer.start();
@@ -14,7 +15,7 @@ int main(int argc, char *argv[])
   ObjectInstances::database.start(true);
 
 
-
+  QTimer::singleShot(0, &ObjectInstances::pingScheduler, SLOT(connectPingers()));
 
 
   return a.exec();

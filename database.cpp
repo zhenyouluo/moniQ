@@ -18,7 +18,7 @@ void Database::start(bool warnUser)
   {
     if (warnUser)
     {
-      qWarning() << "Database credentials not set. Point you web browser to port 6901 at this host to set them.";
+      qWarning() << "Database credentials not set. Point your web browser to this host to set them.";
     }
     return;
   }
@@ -36,4 +36,24 @@ void Database::addHost(QString ipAddress)
 
   QSqlQuery query;
   query.exec("INSERT INTO hosts (name) VALUES ('" + ipAddress + "')");
+}
+
+bool Database::moniqCredentialsSet()
+{
+  if (!connected)
+  {
+    return false;
+  }
+  QSqlQuery query("SELECT * FROM users");
+  return (query.size() > 0);
+}
+
+bool Database::checkCredentials(QString user, QString password)
+{
+  if (!connected)
+  {
+    return false;
+  }
+  QSqlQuery query("SELECT * FROM users WHERE user='" + user + "' AND password = '" + password + "'");
+  return (query.size() > 0);
 }

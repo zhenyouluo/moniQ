@@ -13,7 +13,7 @@ DEFINES += PINGWIN_LIBRARY
 
 SOURCES += pingwin.cpp
 
-HEADERS += pingwin.h\
-        pingwin_global.h
-LIBS +=  -lws2_32
-
+HEADERS += pingwin.h \
+           pingwin_global.h
+LIBS +=  -lws2_32 \
+         -liphlpapi

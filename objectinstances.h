@@ -7,6 +7,7 @@
 #include "networkdiscoverer.h"
 #include "commandserver.h"
 #include "database.h"
+#include "pingscheduler.h"
 
 // Class containing static instances of all objects for which we need exactly one instance
 
@@ -15,10 +16,10 @@ class ObjectInstances : public QObject
   Q_OBJECT
 public:
   explicit ObjectInstances(QObject *parent = 0);
-  static NetworkDiscoverer networkDiscoverer;
   static CommandServer commandServer;
   static Database database;
   static QSettings databaseCredentials;
+  static PingScheduler pingScheduler;
 signals:
 
 public slots:

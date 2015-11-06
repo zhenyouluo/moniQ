@@ -10,7 +10,7 @@ class PingerInterface
 public:
   virtual ~PingerInterface() {}
   virtual int ping(char * ip_address) = 0;
-  virtual int get_ping_result() = 0;
+//  virtual int get_ping_result() = 0;
   virtual bool isValid() = 0;
 };
 

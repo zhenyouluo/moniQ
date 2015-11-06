@@ -26,7 +26,8 @@ SOURCES += main.cpp \
     objectinstances.cpp \
     commandserver.cpp \
     database.cpp \
-    pingthreadcontrol.cpp
+    pingthreadcontrol.cpp \
+    pingscheduler.cpp
 
 HEADERS += \
     pingerinterface.h \
@@ -37,7 +38,8 @@ HEADERS += \
     objectinstances.h \
     commandserver.h \
     database.h \
-    pingthreadcontrol.h
+    pingthreadcontrol.h \
+    pingscheduler.h
 
 DISTFILES +=
 

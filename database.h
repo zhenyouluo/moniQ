@@ -16,6 +16,8 @@ public:
   explicit Database(QObject *parent = 0);
   void start(bool warnUser);
   void addHost(QString ipAddress);
+  bool moniqCredentialsSet();
+  bool checkCredentials(QString user, QString password);
 
 signals:
 

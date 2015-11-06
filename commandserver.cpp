@@ -23,8 +23,7 @@ void CommandServer::start()
   if (m_pWebSocketServer->listen(QHostAddress::Any, 6901))
   {
     qDebug() << "Command Server listening on port 6901";
-    connect(m_pWebSocketServer, &QWebSocketServer::newConnection,
-            this, &CommandServer::onNewConnection);
+    connect(m_pWebSocketServer, &QWebSocketServer::newConnection, this, &CommandServer::onNewConnection);
   }
 }
 
@@ -102,7 +101,100 @@ void CommandServer::processMessage(QString message)
           }
         }
       }
-      QString response = respondToCommand(command, arguments);
+      //
+      // process commands which are allowed without being logged on to moniQ
+      //
+      if (command == "ARE_DATABASE_CREDENTIALS_SETUP")
+      {
+        QString database_user = QString(ObjectInstances::databaseCredentials.value("database_user", "").toByteArray());
+        if (database_user != "")
+        {
+          pClient->sendTextMessage("YES");
+        }
+        else
+        {
+          pClient->sendTextMessage("NO");
+        }
+        return;
+      }
+      if (command == "ARE_MONIQ_CREDENTIALS_SETUP")
+      {
+        if (ObjectInstances::database.moniqCredentialsSet())
+        {
+          pClient->sendTextMessage("YES");
+        }
+        else
+        {
+          pClient->sendTextMessage("NO");
+        }
+        return;
+      }
+      if (command == "SET_DATABASE_CREDENTIALS")
+      {
+        QString database_user = QString(ObjectInstances::databaseCredentials.value("database_user", "").toByteArray());
+        if (database_user != "")
+        {
+          pClient->sendTextMessage("ERROR: Database credentials already setup.");
+          return;
+        }
+        if (arguments.count() < 2)
+        {
+          pClient->sendTextMessage("ERROR: Expecting 2 arguments: database user and password.");
+          return;
+        }
+        ObjectInstances::databaseCredentials.setValue("database_user", arguments[0]);
+        ObjectInstances::databaseCredentials.setValue("database_password", arguments[1]);
+        ObjectInstances::database.start(false);
+        pClient->sendTextMessage("OK");
+      }
+      if (command == "LOGON")
+      {
+        if (ObjectInstances::database.moniqCredentialsSet())
+        {
+          if (arguments.count() < 3)
+          {
+            pClient->sendTextMessage("ERROR: Expecting 3 arguments: session id, user and password.");
+            return;
+          }
+          if (!ObjectInstances::database.checkCredentials(arguments[1], arguments[2]))
+          {
+            pClient->sendTextMessage("ERROR: Wrong username or password.");
+            return;
+          }
+          else
+          {
+            sessions << arguments[0];
+            pClient->sendTextMessage("OK");
+          }
+        }
+        else
+        {
+          if (arguments.count() < 1)
+          {
+            pClient->sendTextMessage("ERROR: Expecting 1 argument: session id.");
+            return;
+          }
+          sessions << arguments[0];
+        }
+        return;
+      }
+
+      //
+      // All other commands require being logged on: first argument must be valid session id
+      //
+      if (arguments.count() < 1)
+      {
+        pClient->sendTextMessage("ERROR: Expecting 1 argument: session id.");
+        return;
+      }
+      if (!sessions.contains(arguments[0]))
+      {
+        pClient->sendTextMessage("ERROR: No valid session id.");
+        return;
+      }
+
+
+      QString response = respondToCommand(pClient, command, arguments);
       if (response != "")
       {
         pClient->sendTextMessage(response);
@@ -116,50 +208,25 @@ void CommandServer::processMessage(QString message)
   }
 }
 
-QString CommandServer::respondToCommand(QString command, QStringList arguments)
+QString CommandServer::respondToCommand(QWebSocket *pClient, QString command, QStringList arguments)
 {
-  if (command == "GET_DATABASE_USER")
+  if (command == "CHECKSESSION")
   {
-    QString database_user = QString(ObjectInstances::databaseCredentials.value("database_user", "").toByteArray());
-    if (database_user == "")
-    {
-      return "DATABASE_USER_NOT_SETUP";
-    }
-    return QString("DATABASE_USER:").append(database_user);
-  }
-  if (command == "GET_DATABASE_PASSWORD")
-  {
-    QString database_password = QString(ObjectInstances::databaseCredentials.value("database_password", "").toByteArray());
-    if (database_password == "")
-    {
-      return "DATABASE_PASSWORD_NOT_SETUP";
-    }
-    return QString("DATABASE_PASSWORD:").append(database_password);
-  }
-  if (command == "SET_DATABASE_USER")
-  {
-    ObjectInstances::databaseCredentials.setValue("database_user", arguments[0]);
-    ObjectInstances::database.start(false);
     return "";
   }
-  if (command == "SET_DATABASE_PASSWORD")
-  {
-    ObjectInstances::databaseCredentials.setValue("database_password", arguments[0]);
-    ObjectInstances::database.start(false);
-    return "";
-  }
+
   if (command == "NETWORKDISCOVER")
   {
-    if (arguments.length() < 2)
+    if (arguments.length() < 3)
     {
       return "ERROR: Please supply starting and ending IP address.";
     }
-    Ipv4_Address* start_address = new Ipv4_Address(arguments[0]);
+    Ipv4_Address* start_address = new Ipv4_Address(arguments[1]);
     if (!start_address->isValid())
     {
       return "ERROR: Starting IP address not valid.";
     }
-    Ipv4_Address* end_address = new Ipv4_Address(arguments[1]);
+    Ipv4_Address* end_address = new Ipv4_Address(arguments[2]);
     if (!end_address->isValid())
     {
       return "ERROR: Ending IP address not valid.";
@@ -170,9 +237,10 @@ QString CommandServer::respondToCommand(QString command, QStringList arguments)
     {
       return "ERROR: Starting IP address must be smaller then ending IP address.";
     }
-    ObjectInstances::networkDiscoverer.pingIpv4Range(start_address, end_address);
+    NetworkDiscoverer* networkDiscoverer = new NetworkDiscoverer(pClient, this);
+    networkDiscoverer->pingIpv4Range(start_address, end_address);
 
-    return "";
+    return "OK";
   }
   return "UNKNOWN COMMAND";
 }
@@ -182,8 +250,8 @@ void CommandServer::socketDisconnected()
   QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
   if (pClient)
   {
-      m_clients.removeAll(pClient);
-      pClient->deleteLater();
+    m_clients.removeAll(pClient);
+    pClient->deleteLater();
   }
 }
 

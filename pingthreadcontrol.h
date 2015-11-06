@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QPluginLoader>
 #include <QTimer>
+#include <QThread>
 
 #include "pingerinterface.h"
 #include "pinger.h"
@@ -14,21 +15,27 @@ class PingThreadControl : public QObject
   Q_OBJECT
 
 private:
-  int threadIndex;
-  Ipv4_Address ipAddress;
-  int failureCounter;
-  QTimer *timer;
+  bool thread_available;
+  bool monitoringPing;
+  QString ipAddress;
+  QThread thread;
   Pinger* pinger;
+
+
+  int failureCounter;
 
 public:
   explicit PingThreadControl(QObject *parent = 0);
+  void startPing(QString ip_address, bool monitoring);
+  bool isAvailable();
+  void connectPinger();
 
 signals:
-  void killPinger();
+  void initPing(QString ip_address);
 
 public slots:
-  void timeOut();
   void processPingResult(int result);
+
 };
 
 #endif // PINGTHREADCONTROL_H
