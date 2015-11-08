@@ -1,6 +1,6 @@
 #include <QDebug>
 #include <QThreadPool>
-#include <float.h>
+#include <QHostInfo>
 
 
 #include "networkdiscoverer.h"
@@ -34,19 +34,47 @@ void NetworkDiscoverer::pingIpv4Range(Ipv4_Address* start_ip, Ipv4_Address* end_
 // socket
 void NetworkDiscoverer::processPingResult(QString ip_address, int result)
 {
-  if (result == 0)
+  if (waitingForAnswer.remove(ip_address))
   {
-    pClient->sendTextMessage("DISCOVERED IPV4:"+ip_address);
+    qDebug() << "removed";
+    // ip adress removed, so it was on our waiting list
+
+    if (result == 0)
+    {
+      // host responded, try to find hostname
+      QHostInfo::lookupHost(ip_address, this, SLOT(publishDiscoveredHost(QHostInfo)));
+    }
+    else
+    {
+      if (waitingForAnswer.size() == 0)
+      {
+        this->disconnect();
+        this->deleteLater();
+      }
+    }
+    int nr_of_addresses = 1 + endIp - startIp;
+    float progress = (nr_of_addresses - waitingForAnswer.size()) / (float) nr_of_addresses;
+    pClient->sendTextMessage("DISCOVERPROGRESS:"+QString::number(progress));
   }
-  waitingForAnswer.remove(ip_address);
-  int nr_of_addresses = 1 + endIp - startIp;
-  float progress = (nr_of_addresses - waitingForAnswer.size()) / (float) nr_of_addresses;
-  pClient->sendTextMessage("DISCOVERPROGRESS:"+QString::number(progress));
+  // log result
+  qDebug() << ip_address << ":" << result;
+}
+
+void NetworkDiscoverer::publishDiscoveredHost(QHostInfo hostinfo)
+{
+  QString hostname;
+  if (hostinfo.error() == QHostInfo::NoError)
+  {
+    hostname = hostinfo.hostName();
+  }
+  else
+  {
+    hostname = hostinfo.addresses().at(0).toIPv4Address();
+  }
+  pClient->sendTextMessage("DISCOVERED IPV4:" + hostname + ";" + hostinfo.addresses().at(0).toString());
   if (waitingForAnswer.size() == 0)
   {
     this->disconnect();
     this->deleteLater();
   }
-  // log result
-  qDebug() << ip_address << ":" << result;
 }

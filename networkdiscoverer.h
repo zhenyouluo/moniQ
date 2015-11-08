@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QWebSocket>
+#include <QHostInfo>
 
 #include "ipv4_address.h"
 #include "pingthreadcontrol.h"
@@ -29,6 +30,7 @@ signals:
 
 public slots:
   void processPingResult(QString ip_address, int result);
+  void publishDiscoveredHost(QHostInfo hostinfo);
 };
 
 #endif // NETWORKDISCOVERER_H
