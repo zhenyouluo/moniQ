@@ -1,6 +1,7 @@
 #include <QCoreApplication>
 #include <QDebug>
 #include <QObject>
+#include <QProcess>
 
 #include "networkdiscoverer.h"
 #include "objectinstances.h"
@@ -17,7 +18,11 @@ int main(int argc, char *argv[])
 
   QTimer::singleShot(0, &ObjectInstances::pingScheduler, SLOT(connectPingers()));
 
-
-  return a.exec();
-
+  int returncode = a.exec();
+  if (returncode == -1)
+  {
+    QProcess* proc = new QProcess();
+    proc->start(QCoreApplication::applicationFilePath());
+  }
+  return returncode;
 }

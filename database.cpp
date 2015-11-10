@@ -30,12 +30,15 @@ void Database::start(bool warnUser)
   connected = db.open();
 }
 
-void Database::addHost(QString ipAddress)
+void Database::addHost(QString host, QString ipAddress)
 {
-  // if connected
-
-  QSqlQuery query;
-  query.exec("INSERT INTO hosts (name) VALUES ('" + ipAddress + "')");
+  if (connected)
+  {
+    QSqlQuery query;
+    query.exec("DELETE FROM hosts WHERE ipv4='" + ipAddress + "'");
+    query.exec("INSERT INTO hosts (hostname, ipv4) VALUES ('" + host + "','" + ipAddress + "')");
+    ObjectInstances::commandServer.broadCast("HOSTLIST UPDATED");
+  }
 }
 
 bool Database::moniqCredentialsSet()

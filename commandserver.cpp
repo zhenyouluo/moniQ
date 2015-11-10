@@ -1,6 +1,7 @@
 #include "QtWebSockets/QWebSocketServer"
 #include "QtWebSockets/QWebSocket"
 #include <QtCore/QDebug>
+#include <QCoreApplication>
 
 #include "commandserver.h"
 #include "objectinstances.h"
@@ -29,6 +30,7 @@ void CommandServer::start()
 
 CommandServer::~CommandServer()
 {
+  qDebug() << "Command Server stopped listening on port 6901";
   m_pWebSocketServer->close();
   qDeleteAll(m_clients.begin(), m_clients.end());
 }
@@ -214,7 +216,13 @@ QString CommandServer::respondToCommand(QWebSocket *pClient, QString command, QS
   {
     return "";
   }
-
+  if (command == "GET_DATABASE_CREDENTIALS")
+  {
+    return "DATABASE_CREDENTIALS:" +
+           QString(ObjectInstances::databaseCredentials.value("database_user", "").toByteArray()) +
+           ";" +
+           QString(ObjectInstances::databaseCredentials.value("database_password", "").toByteArray());
+  }
   if (command == "NETWORKDISCOVER")
   {
     if (arguments.length() < 3)
@@ -242,7 +250,34 @@ QString CommandServer::respondToCommand(QWebSocket *pClient, QString command, QS
 
     return "OK";
   }
+  if (command == "ADDHOST")
+  {
+    if (arguments.length() < 3)
+    {
+      return "ERROR: Please supply hostname and IP address.";
+    }
+    Ipv4_Address* ip_address = new Ipv4_Address(arguments[2]);
+    if (!ip_address->isValid())
+    {
+      return "ERROR: IP address not valid.";
+    }
+    ObjectInstances::database.addHost(arguments[1], arguments[2]);
+    return "";
+  }
+  if (command == "RESTART")
+  {
+    QCoreApplication::exit(-1);
+    return "moniQ restarting";
+  }
   return "UNKNOWN COMMAND";
+}
+
+void CommandServer::broadCast(QString message)
+{
+  Q_FOREACH (QWebSocket* pClient, m_clients)
+  {
+    pClient->sendTextMessage(message);
+  }
 }
 
 void CommandServer::socketDisconnected()
