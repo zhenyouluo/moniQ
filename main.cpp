@@ -15,12 +15,15 @@ int main(int argc, char *argv[])
 
   ObjectInstances::database.start(true);
 
+  ObjectInstances::processController.startProcesses();
+  ObjectInstances::processController.messageScheduler("aise\r\n");
 
   QTimer::singleShot(0, &ObjectInstances::pingScheduler, SLOT(connectPingers()));
 
   int returncode = a.exec();
   if (returncode == -1)
   {
+    ObjectInstances::processController.endProcesses();
     QProcess* proc = new QProcess();
     proc->start(QCoreApplication::applicationFilePath());
   }

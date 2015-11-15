@@ -27,7 +27,8 @@ SOURCES += main.cpp \
     commandserver.cpp \
     database.cpp \
     pingthreadcontrol.cpp \
-    pingscheduler.cpp
+    pingscheduler.cpp \
+    processcontroller.cpp
 
 HEADERS += \
     pingerinterface.h \
@@ -39,7 +40,8 @@ HEADERS += \
     commandserver.h \
     database.h \
     pingthreadcontrol.h \
-    pingscheduler.h
+    pingscheduler.h \
+    processcontroller.h
 
 DISTFILES +=
 

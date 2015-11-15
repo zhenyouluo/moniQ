@@ -8,6 +8,7 @@
 #include "commandserver.h"
 #include "database.h"
 #include "pingscheduler.h"
+#include "processcontroller.h"
 
 // Class containing static instances of all objects for which we need exactly one instance
 
@@ -20,6 +21,7 @@ public:
   static Database database;
   static QSettings databaseCredentials;
   static PingScheduler pingScheduler;
+  static ProcessController processController;
 signals:
 
 public slots:

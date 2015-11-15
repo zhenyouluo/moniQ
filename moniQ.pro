@@ -6,7 +6,8 @@
 
 TEMPLATE = subdirs
 
-SUBDIRS += main.pro
+SUBDIRS += main.pro \
+    moniQscheduling
 
 win32
 {
