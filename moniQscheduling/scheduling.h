@@ -2,10 +2,17 @@
 #define SCHEDULING_H
 
 #include <QObject>
+#include <QMultiMap>
+#include <QHash>
 
 class Scheduling : public QObject
 {
   Q_OBJECT
+
+private:
+  QMultiMap<quint64, QString> pingSchedule;
+  QHash<QString, int> hostsUpCheckIntervals;
+
 public:
   explicit Scheduling(QObject *parent = 0);
 
@@ -13,6 +20,8 @@ signals:
 
 public slots:
   void processStdin(QString string);
+  void scheduleNextSeconds();
+  void startPing();
 };
 
 #endif // SCHEDULING_H

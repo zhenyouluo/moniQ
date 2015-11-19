@@ -7,6 +7,7 @@
 QT       += core
 
 QT       -= gui
+QT       += sql
 
 TARGET = moniQscheduling
 CONFIG   += console
@@ -17,8 +18,14 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
     stdinthread.cpp \
-    scheduling.cpp
+    scheduling.cpp \
+    objectinstances2.cpp \
+    ../database.cpp
+
 
 HEADERS += \
     stdinthread.h \
-    scheduling.h
+    scheduling.h \
+    objectinstances2.h \
+    ../database.h
+

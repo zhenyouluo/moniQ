@@ -2,6 +2,7 @@
 #define DATABASE_H
 
 #include <QObject>
+#include <QHash>
 #include <QtSql/QSqlDatabase>
 
 class Database : public QObject
@@ -14,11 +15,11 @@ private:
 
 public:
   explicit Database(QObject *parent = 0);
-  void start(bool warnUser);
+  void start(QString user, QString password);
   void addHost(QString host, QString ipAddress);
   bool moniqCredentialsSet();
   bool checkCredentials(QString user, QString password);
-
+  QHash<QString, int> getHostsUpCheckIntervals();
 signals:
 
 public slots:

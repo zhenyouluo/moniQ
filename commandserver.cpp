@@ -146,7 +146,7 @@ void CommandServer::processMessage(QString message)
         }
         ObjectInstances::databaseCredentials.setValue("database_user", arguments[0]);
         ObjectInstances::databaseCredentials.setValue("database_password", arguments[1]);
-        ObjectInstances::database.start(false);
+        ObjectInstances::database.start(arguments[0], arguments[1]);
         pClient->sendTextMessage("OK");
       }
       if (command == "LOGON")
@@ -262,6 +262,7 @@ QString CommandServer::respondToCommand(QWebSocket *pClient, QString command, QS
       return "ERROR: IP address not valid.";
     }
     ObjectInstances::database.addHost(arguments[1], arguments[2]);
+    ObjectInstances::commandServer.broadCast("HOSTLIST UPDATED");
     return "";
   }
   if (command == "RESTART")

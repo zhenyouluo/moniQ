@@ -12,8 +12,14 @@ int main(int argc, char *argv[])
   QCoreApplication a(argc, argv);
 
   ObjectInstances::commandServer.start();
+  QString database_user = QString(ObjectInstances::databaseCredentials.value("database_user", "").toByteArray());
+  QString database_password = QString(ObjectInstances::databaseCredentials.value("database_password", "").toByteArray());
 
-  ObjectInstances::database.start(true);
+  if ((database_user == "") || (database_password == ""))
+  {
+    qWarning() << "Database credentials not set. Point your web browser to this host to set them.";
+  }
+  ObjectInstances::database.start(database_user, database_password);
 
   ObjectInstances::processController.startProcesses();
   ObjectInstances::processController.messageScheduler("aise\r\n");
