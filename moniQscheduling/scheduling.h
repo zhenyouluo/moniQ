@@ -12,9 +12,12 @@ class Scheduling : public QObject
 private:
   QMultiMap<quint64, QString> pingSchedule;
   QHash<QString, int> hostsUpCheckIntervals;
+  QHash<QString, int> hostsDownCheckIntervals;
 
 public:
   explicit Scheduling(QObject *parent = 0);
+  void start();
+  void addHostToSchedule(QString ipv4, bool up);
 
 signals:
 

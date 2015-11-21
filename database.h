@@ -19,7 +19,7 @@ public:
   void addHost(QString host, QString ipAddress);
   bool moniqCredentialsSet();
   bool checkCredentials(QString user, QString password);
-  QHash<QString, int> getHostsUpCheckIntervals();
+  QHash<QString, int> getHostsCheckIntervals(bool up);
 signals:
 
 public slots:

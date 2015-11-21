@@ -49,7 +49,7 @@ bool Database::checkCredentials(QString user, QString password)
   return (query.size() > 0);
 }
 
-QHash<QString, int> Database::getHostsUpCheckIntervals()
+QHash<QString, int> Database::getHostsCheckIntervals(bool up)
 {
   QHash<QString, int> intervals;
   if (connected)
@@ -62,7 +62,15 @@ QHash<QString, int> Database::getHostsUpCheckIntervals()
       QString hosttemplate = query.value(templatefield).toString();
       QString ipv4 = query.value(ipv4field).toString();
       QSqlQuery query2("SELECT * FROM host_templates WHERE name = '" + hosttemplate + "';");
-      int intervalfield = query2.record().indexOf("check_interval_on_up");
+      int intervalfield;
+      if (up)
+      {
+        intervalfield = query2.record().indexOf("check_interval_on_up");
+      }
+      else
+      {
+        intervalfield = query2.record().indexOf("check_interval_on_down");
+      }
       while (query2.next())
       {
         intervals.insert(ipv4, query2.value(intervalfield).toInt());

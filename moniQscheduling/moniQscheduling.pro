@@ -20,12 +20,19 @@ SOURCES += main.cpp \
     stdinthread.cpp \
     scheduling.cpp \
     objectinstances2.cpp \
-    ../database.cpp
+    ../database.cpp \
+    pinger.cpp \
+    pingscheduler.cpp \
+    pingthreadcontrol.cpp
 
 
 HEADERS += \
     stdinthread.h \
     scheduling.h \
     objectinstances2.h \
-    ../database.h
+    ../database.h \
+    pinger.h \
+    pingerinterface.h \
+    pingscheduler.h \
+    pingthreadcontrol.h
 

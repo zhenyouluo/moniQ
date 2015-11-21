@@ -19,8 +19,9 @@ int main(int argc, char *argv[])
 
   ObjectInstances2::database.start(database_user, database_password);
 
-  Scheduling* scheduling = new Scheduling();
   cout << "Scheduling process started" << endl;
-  QTimer::singleShot(0, scheduling, SLOT(scheduleNextSeconds()));
+  ObjectInstances2::scheduler.start();
+  QTimer::singleShot(0, &ObjectInstances2::pingScheduler, SLOT(connectPingers()));
+  QTimer::singleShot(0, &ObjectInstances2::scheduler, SLOT(scheduleNextSeconds()));
   return a.exec();
 }

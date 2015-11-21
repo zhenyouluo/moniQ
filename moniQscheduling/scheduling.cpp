@@ -10,12 +10,17 @@
 
 Scheduling::Scheduling(QObject *parent) : QObject(parent)
 {
+}
+
+void Scheduling::start()
+{
   StdinThread *t = new StdinThread();
   connect(t, &StdinThread::incomingData, this, &Scheduling::processStdin);
   connect(t, SIGNAL(finished()), t, SLOT(deleteLater()));
   t->start();
 
-  hostsUpCheckIntervals = ObjectInstances2::database.getHostsUpCheckIntervals();
+  hostsUpCheckIntervals = ObjectInstances2::database.getHostsCheckIntervals(true);
+  hostsDownCheckIntervals = ObjectInstances2::database.getHostsCheckIntervals(false);
 
   // timestamp: utc seconds since epoch
   qint64 now = QDateTime::currentMSecsSinceEpoch() / 1000;
@@ -34,6 +39,27 @@ Scheduling::Scheduling(QObject *parent) : QObject(parent)
 
       pingSchedule.insert(now + sec_to_next_check, i.key());
     }
+  }
+}
+
+void Scheduling::addHostToSchedule(QString ipv4, bool up)
+{
+  qint64 now = QDateTime::currentMSecsSinceEpoch() / 1000;
+  int interval;
+  if (up)
+  {
+    interval = hostsUpCheckIntervals.value(ipv4, -1);
+  }
+  else
+  {
+    interval = hostsDownCheckIntervals.value(ipv4, -1);
+  }
+  QTextStream cout(stdout);
+
+  cout << "intreval: " << interval << endl;
+  if (interval != -1)
+  {
+    pingSchedule.insert(now + interval, ipv4);
   }
 }
 
@@ -61,13 +87,10 @@ void Scheduling::scheduleNextSeconds()
 
 void Scheduling::startPing()
 {
-  QTextStream cout(stdout);
-
-
   if (!pingSchedule.isEmpty())
   {
     QString ipv4 = pingSchedule.take(pingSchedule.firstKey());
-    cout << ipv4 << endl;
+    ObjectInstances2::pingScheduler.schedulePing(ipv4, true);
   }
 }
 

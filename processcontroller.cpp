@@ -11,7 +11,7 @@ bool ProcessController::startProcesses()
   schedulingProcess = new QProcess();
   connect(this, &ProcessController::endProcess, schedulingProcess, &QProcess::kill);
   connect(schedulingProcess, &QProcess::readyReadStandardOutput, this, &ProcessController::dataFromScheduler);
-  schedulingProcess->start("C:\\Users\\Aise\\Documents\\build-moniQ-msvc2013_64-Release\\moniQscheduling\\release\\moniQscheduling.exe");
+  schedulingProcess->start("C:\\Users\\Aise\\Documents\\build-moniQ-msvc2013_64-Debug\\moniQscheduling\\debug\\moniQscheduling.exe");
   return schedulingProcess->waitForStarted();
 }
 
