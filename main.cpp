@@ -22,7 +22,6 @@ int main(int argc, char *argv[])
   ObjectInstances::database.start(database_user, database_password);
 
   ObjectInstances::processController.startProcesses();
-  ObjectInstances::processController.messageScheduler("aise\r\n");
 
   QTimer::singleShot(0, &ObjectInstances::pingScheduler, SLOT(connectPingers()));
 

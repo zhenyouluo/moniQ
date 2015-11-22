@@ -2,9 +2,8 @@
 #include <QDebug>
 #include <QTextStream>
 #include <QTime>
-#include <QTimer>
 
-#include <scheduling.h>
+#include <analyzing.h>
 #include "objectinstances2.h"
 
 int main(int argc, char *argv[])
@@ -19,12 +18,8 @@ int main(int argc, char *argv[])
 
   ObjectInstances2::database.start(database_user, database_password);
 
-  cout << "OUT:Scheduling process started" << endl;
-  ObjectInstances2::scheduler.start();
+  cout << "OUT:Analysis process started" << endl;
+  ObjectInstances2::analyzer.start();
 
-  ObjectInstances2::processController.startProcesses();
-
-  QTimer::singleShot(0, &ObjectInstances2::pingScheduler, SLOT(connectPingers()));
-  QTimer::singleShot(0, &ObjectInstances2::scheduler, SLOT(scheduleNextSeconds()));
   return a.exec();
 }

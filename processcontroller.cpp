@@ -1,4 +1,5 @@
 #include <QDebug>
+#include <QTextStream>
 
 #include "processcontroller.h"
 
@@ -24,7 +25,17 @@ void ProcessController::dataFromScheduler()
 {
   while(schedulingProcess->canReadLine())
   {
-    qDebug() << "hier: "<< schedulingProcess->readLine();
+    QString message = QString(schedulingProcess->readLine());
+    message = message.trimmed();
+    if (message.left(4) == "OUT:")
+    {
+      QTextStream out(stdout);
+      out << message.remove(0,4) << endl;
+    }
+    else
+    {
+      qDebug() << message;
+    }
   }
 }
 

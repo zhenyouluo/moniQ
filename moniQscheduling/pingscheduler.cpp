@@ -65,6 +65,7 @@ void PingScheduler::processPingResult(QString ipAddress, int result, bool monito
       // reschedule according to down schedule
       ObjectInstances2::scheduler.addHostToSchedule(ipAddress, false);
     }
+    ObjectInstances2::processController.messageAnalyzer("PINGRESULT:" + ipAddress + ";" + QString::number(result));
   }
   else
   {

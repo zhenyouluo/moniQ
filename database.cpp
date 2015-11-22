@@ -1,6 +1,7 @@
 #include <QDebug>
 #include <QSqlQuery>
 #include <QSqlRecord>
+#include <QDateTime>
 
 #include "database.h"
 
@@ -25,7 +26,8 @@ void Database::addHost(QString host, QString ipAddress)
   {
     QSqlQuery query;
     query.exec("DELETE FROM hosts WHERE ipv4='" + ipAddress + "'");
-    query.exec("INSERT INTO hosts (hostname, ipv4) VALUES ('" + host + "','" + ipAddress + "')");
+    query.exec("INSERT INTO hosts (hostname, ipv4) VALUES ('" + host + "','" + ipAddress + "')"); 
+    query.exec("INSERT INTO host_state_history (ipv4, state, time) VALUES ('" + ipAddress + "','normal','" + QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss") + "')");
   }
 }
 
@@ -78,4 +80,82 @@ QHash<QString, int> Database::getHostsCheckIntervals(bool up)
     }
   }
   return intervals;
+}
+
+QHash<QString, int> Database::getHostsWarninglevels()
+{
+  QHash<QString, int> levels;
+  if (connected)
+  {
+    QSqlQuery query("SELECT * FROM hosts;");
+    int ipv4field = query.record().indexOf("ipv4");
+    int templatefield = query.record().indexOf("template");
+    while (query.next())
+    {
+      QString hosttemplate = query.value(templatefield).toString();
+      QString ipv4 = query.value(ipv4field).toString();
+      QSqlQuery query2("SELECT * FROM host_templates WHERE name = '" + hosttemplate + "';");
+      int field = query2.record().indexOf("missed_pings_warning_level");
+      while (query2.next())
+      {
+        levels.insert(ipv4, query2.value(field).toInt());
+      }
+    }
+  }
+  return levels;
+}
+
+QHash<QString, int> Database::getHostsCriticalLevels()
+{
+  QHash<QString, int> levels;
+  if (connected)
+  {
+    QSqlQuery query("SELECT * FROM hosts;");
+    int ipv4field = query.record().indexOf("ipv4");
+    int templatefield = query.record().indexOf("template");
+    while (query.next())
+    {
+      QString hosttemplate = query.value(templatefield).toString();
+      QString ipv4 = query.value(ipv4field).toString();
+      QSqlQuery query2("SELECT * FROM host_templates WHERE name = '" + hosttemplate + "';");
+      int field = query2.record().indexOf("missed_pings_critical_level");
+      while (query2.next())
+      {
+        levels.insert(ipv4, query2.value(field).toInt());
+      }
+    }
+  }
+  return levels;
+}
+
+QHash<QString, QString> Database::getHostsCriticalLevels()
+{
+  QHash<QString, QString> states;
+  if (connected)
+  {
+    QSqlQuery query("SELECT * FROM hosts;");
+    int ipv4field = query.record().indexOf("ipv4");
+    int statefield = query.record().indexOf("state");
+    while (query.next())
+    {
+      states.insert(query.value(ipv4field), query.value(statefield));
+    }
+  }
+  return states;
+}
+
+QHash<QString, int> Database::getHostsMissedPings()
+{
+  QHash<QString, int> missedpings;
+  if (connected)
+  {
+    QSqlQuery query("SELECT * FROM hosts;");
+    int ipv4field = query.record().indexOf("ipv4");
+    int mpfield = query.record().indexOf("missed_pings");
+    while (query.next())
+    {
+      missedpings.insert(query.value(ipv4field), query.value(mpfield));
+    }
+  }
+  return missedpings;
 }

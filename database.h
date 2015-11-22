@@ -20,6 +20,11 @@ public:
   bool moniqCredentialsSet();
   bool checkCredentials(QString user, QString password);
   QHash<QString, int> getHostsCheckIntervals(bool up);
+  QHash<QString, int> getHostsWarninglevels();
+  QHash<QString, int> getHostsCriticalLevels();
+  QHash<QString, QString> getHostsCriticalLevels();
+  QHash<QString, int> getHostsMissedPings();
+
 signals:
 
 public slots:
