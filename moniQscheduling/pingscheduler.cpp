@@ -52,7 +52,7 @@ void PingScheduler::schedulePing(QString ip_address, bool monitoring)
 void PingScheduler::processPingResult(QString ipAddress, int result, bool monitoring)
 {
   QTextStream cout(stdout);
-  cout << "PINGRESULT:" << ipAddress << ";" << result << endl;
+
   if (monitoring)
   {
     if (result == 0)
@@ -65,6 +65,7 @@ void PingScheduler::processPingResult(QString ipAddress, int result, bool monito
       // reschedule according to down schedule
       ObjectInstances2::scheduler.addHostToSchedule(ipAddress, false);
     }
+    cout << "PINGRESULT:" << ipAddress << ";" << result << monitoring << endl;
     ObjectInstances2::processController.messageAnalyzer("PINGRESULT:" + ipAddress + ";" + QString::number(result));
   }
   else

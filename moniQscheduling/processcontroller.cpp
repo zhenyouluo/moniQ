@@ -34,7 +34,9 @@ void ProcessController::dataFromAnalyzer()
 
 void ProcessController::messageAnalyzer(QString message)
 {
-  analyzingProcess->write(message.toLatin1().data());
+  QTextStream cout(stdout);
+  cout << "m:" << message << endl;
+  analyzingProcess->write((message + "\n").toLatin1().data());
 }
 
 

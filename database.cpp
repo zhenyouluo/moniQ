@@ -128,7 +128,7 @@ QHash<QString, int> Database::getHostsCriticalLevels()
   return levels;
 }
 
-QHash<QString, QString> Database::getHostsCriticalLevels()
+QHash<QString, QString> Database::getHostsStates()
 {
   QHash<QString, QString> states;
   if (connected)
@@ -138,7 +138,7 @@ QHash<QString, QString> Database::getHostsCriticalLevels()
     int statefield = query.record().indexOf("state");
     while (query.next())
     {
-      states.insert(query.value(ipv4field), query.value(statefield));
+      states.insert(query.value(ipv4field).toString(), query.value(statefield).toString());
     }
   }
   return states;
@@ -154,8 +154,19 @@ QHash<QString, int> Database::getHostsMissedPings()
     int mpfield = query.record().indexOf("missed_pings");
     while (query.next())
     {
-      missedpings.insert(query.value(ipv4field), query.value(mpfield));
+      missedpings.insert(query.value(ipv4field).toString(), query.value(mpfield).toInt());
     }
   }
   return missedpings;
+}
+
+void Database::updateMissedPings(QString ipv4, int missed_pings)
+{
+  QSqlQuery query("UPDATE `hosts` SET `missed_pings`=" + QString::number(missed_pings) + " WHERE ipv4='" + ipv4 + "';");
+}
+
+void Database::updateState(QString ipv4, QString current_state)
+{
+  QSqlQuery query("UPDATE `hosts` SET `state`='" + current_state + "' WHERE ipv4='" + ipv4 + "';");
+  QSqlQuery query2("INSERT INTO `host_state_history`(`ipv4`, `state`, `time`) VALUES ('" + ipv4 + "','" + current_state + "','" + QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss") + "')");
 }

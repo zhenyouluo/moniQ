@@ -41,5 +41,5 @@ void ProcessController::dataFromScheduler()
 
 void ProcessController::messageScheduler(QString message)
 {
-  schedulingProcess->write(message.toLatin1().data());
+  schedulingProcess->write((message + "\n").toLatin1().data());
 }

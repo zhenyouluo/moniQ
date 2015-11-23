@@ -37,30 +37,13 @@ void Analyzing::processStdin(QString message)
       int result = parts.value(1).toInt();
       int prev_missed_pings = hostMissedPings.value(ipv4);
       QString prev_state = hostStates.value(ipv4);
+      int missed_pings = 0;
+      QString current_state = "normal";
 
-      if (result == 0)
+      if (result != 0)
       {
-        if (prev_missed_pings > 0)
-        {
-          hostMissedPings.insert(ipv4, 0);
-          // update database
-        }
-        if (prev_state != "normal")
-        {
-          hostStates.insert(ipv4, "normal");
-          // update database (2x)
-        }
-        else
-        {
-          // expand history state in database
-        }
-      }
-      else
-      {
-        int missed_pings = prev_missed_pings + 1;
-        // update database
+        missed_pings = prev_missed_pings + 1;
 
-        QString current_state = "normal";
         if (missed_pings > hostsWarningLevels.value(ipv4))
         {
           current_state = "warning";
@@ -69,15 +52,17 @@ void Analyzing::processStdin(QString message)
         {
           current_state = "critical";
         }
+      }
+
+      hostMissedPings.insert(ipv4, missed_pings);
+      // update missed pings in database
+      ObjectInstances2::database.updateMissedPings(ipv4, missed_pings);
+
+      if (prev_state != current_state)
+      {
         hostStates.insert(ipv4, current_state);
-        if (prev_state == current_state)
-        {
-          // expand history state in database
-        }
-        else
-        {
-          // update database (2x)
-        }
+        // new state to database
+        ObjectInstances2::database.updateState(ipv4, current_state);
       }
     }
   }
