@@ -14,11 +14,14 @@ public:
   StdinThread();
   void run(void)
   {
+    QTextStream stream(stdin);
+    QString line;
     while (true)
     {
-      QTextStream stream(stdin);
-      QString line;
       line = stream.readLine();
+      QTextStream cout(stdout);
+
+      cout << "stdin: " << line << endl;
       emit incomingData(line);
     }
   }

@@ -12,7 +12,7 @@
 NetworkDiscoverer::NetworkDiscoverer(QWebSocket* pclient, QObject *parent) : QObject(parent)
 {
   pClient = pclient;
-  QObject::connect(&ObjectInstances::pingScheduler, &PingScheduler::sendPingResult, this, &NetworkDiscoverer::processPingResult);
+  QObject::connect(&ObjectInstances::processController, &ProcessController::sendPingResult, this, &NetworkDiscoverer::processPingResult);
 }
 
 void NetworkDiscoverer::pingIpv4Range(Ipv4_Address* start_ip, Ipv4_Address* end_ip)
@@ -26,7 +26,8 @@ void NetworkDiscoverer::pingIpv4Range(Ipv4_Address* start_ip, Ipv4_Address* end_
   while (curr_ip <= endIp)
   {
     waitingForAnswer.insert(Ipv4_Address(curr_ip).toString());
-    ObjectInstances::pingScheduler.schedulePing(Ipv4_Address(curr_ip).toString(), false);
+    ObjectInstances::processController.messageScheduler("PING:" + Ipv4_Address(curr_ip).toString());
+    //ObjectInstances::pingScheduler.schedulePing(Ipv4_Address(curr_ip).toString(), false);
     curr_ip++;
   }
 }

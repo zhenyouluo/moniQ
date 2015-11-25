@@ -18,6 +18,7 @@ private:
 
 signals:
   void endProcess();
+  void sendPingResult(QString ip_address, int result);
 
 public slots:
   void dataFromScheduler();

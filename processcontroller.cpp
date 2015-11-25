@@ -36,10 +36,20 @@ void ProcessController::dataFromScheduler()
     {
       qDebug() << message;
     }
+    if (message.left(11) == "PINGRESULT:")
+    {
+      QStringList parts = message.remove(0,11).split(";");
+      if (parts.size() > 1)
+      {
+        emit sendPingResult(parts[0], parts[1].toInt());
+      }
+    }
+
   }
 }
 
 void ProcessController::messageScheduler(QString message)
 {
+  qDebug() << "write" << message;
   schedulingProcess->write((message + "\n").toLatin1().data());
 }

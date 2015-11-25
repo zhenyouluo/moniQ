@@ -100,4 +100,8 @@ void Scheduling::processStdin(QString message)
   QTextStream cout(stdout);
 
   cout << "on sched read from stdin: " << message << endl;
+  if (message.left(5) == "PING:")
+  {
+    ObjectInstances2::pingScheduler.schedulePing(message.remove(0,5), false);
+  }
 }

@@ -28,7 +28,7 @@ void ProcessController::dataFromAnalyzer()
     QString message = QString(analyzingProcess->readLine());
     message = message.trimmed();
     QTextStream out(stdout);
-    out << message << endl;
+    out << "a:" << message << endl;
   }
 }
 
