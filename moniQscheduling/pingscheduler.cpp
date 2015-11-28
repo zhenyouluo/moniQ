@@ -6,7 +6,11 @@
 
 PingScheduler::PingScheduler(QObject *parent) : QObject(parent)
 {
+#ifdef QT_DEBUG
   QCoreApplication::addLibraryPath("C:\\Users\\Aise\\Documents\\build-moniQ-msvc2013_64-Debug\\pingwin\\debug");
+#else
+  QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath());
+#endif
 }
 
 int PingScheduler::getFreeThread()

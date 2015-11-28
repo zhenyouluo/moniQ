@@ -1,5 +1,6 @@
 #include <QDebug>
 #include <QTextStream>
+#include <QCoreApplication>
 
 #include "processcontroller.h"
 
@@ -12,7 +13,12 @@ bool ProcessController::startProcesses()
   analyzingProcess = new QProcess();
   connect(this, &ProcessController::endProcess, analyzingProcess, &QProcess::kill);
   connect(analyzingProcess, &QProcess::readyReadStandardOutput, this, &ProcessController::dataFromAnalyzer);
+
+#ifdef QT_DEBUG
   analyzingProcess->start("C:\\Users\\Aise\\Documents\\build-moniQ-msvc2013_64-Debug\\moniQanalysis\\debug\\moniQanalysis.exe");
+#else
+  analyzingProcess->start("\"" + QCoreApplication::applicationDirPath() + "\\moniQanalysis.exe\"");
+#endif
   return analyzingProcess->waitForStarted();
 }
 

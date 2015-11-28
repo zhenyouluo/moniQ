@@ -1,5 +1,6 @@
 #include <QDebug>
 #include <QTextStream>
+#include <QCoreApplication>
 
 #include "processcontroller.h"
 
@@ -12,7 +13,13 @@ bool ProcessController::startProcesses()
   schedulingProcess = new QProcess();
   connect(this, &ProcessController::endProcess, schedulingProcess, &QProcess::kill);
   connect(schedulingProcess, &QProcess::readyReadStandardOutput, this, &ProcessController::dataFromScheduler);
+#ifdef QT_DEBUG
   schedulingProcess->start("C:\\Users\\Aise\\Documents\\build-moniQ-msvc2013_64-Debug\\moniQscheduling\\debug\\moniQscheduling.exe");
+#else
+  schedulingProcess->start("\"" + QCoreApplication::applicationDirPath() + "\\moniQscheduling.exe\"");
+  QTextStream out(stdout);
+  out << QCoreApplication::applicationDirPath() + "\\moniQscheduling.exe" << endl;
+#endif
   return schedulingProcess->waitForStarted();
 }
 

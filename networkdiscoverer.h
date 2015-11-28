@@ -6,8 +6,6 @@
 #include <QHostInfo>
 
 #include "ipv4_address.h"
-#include "pingthreadcontrol.h"
-#include "pingscheduler.h"
 
 #define PING_CHECK_INTERVAL 1000 // in msec
 
@@ -17,7 +15,6 @@ class NetworkDiscoverer : public QObject
 
 private:
   QWebSocket* pClient;
-  PingThreadControl* pingThreadControls[MAX_CONCURRENT_PINGS];
   QSet<QString> waitingForAnswer;
   quint32 endIp;
   quint32 startIp;

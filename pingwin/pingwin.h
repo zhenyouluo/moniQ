@@ -6,7 +6,7 @@
 #include <winsock2.h>
 
 #include "pingwin_global.h"
-#include "../pingerinterface.h"
+#include "../moniQscheduling/pingerinterface.h"
 
 #define WIN32_LEAN_AND_MEAN
 #define ICMP_PACKET_SIZE 32
