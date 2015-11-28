@@ -15,5 +15,5 @@ win32
   SUBDIRS +=pingwin
 }
 
-
+SUBDIRS -=pingwin
 
