@@ -12,9 +12,9 @@ SUBDIRS += main.pro \
 
 win32
 {
-  SUBDIRS -=pinglin
+  SUBDIRS +=pingwin
 }
 unix
 {
-  SUBDIRS -=pingwin
+  SUBDIRS +=pinglin
 }

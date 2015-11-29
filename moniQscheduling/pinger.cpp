@@ -14,7 +14,12 @@ void Pinger::ping(QString ip_address)
 {
   if (!pingerPlugin)
   {
+#ifdef Q_OS_WIN
     pluginLoader = new QPluginLoader("pingwin");
+#endif
+#ifdef Q_OS_LINUX
+    pluginLoader = new QPluginLoader("pinglin");
+#endif
     pingerPlugin = pluginLoader->instance();
     if (!pingerPlugin)
     {

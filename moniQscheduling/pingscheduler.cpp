@@ -7,7 +7,12 @@
 PingScheduler::PingScheduler(QObject *parent) : QObject(parent)
 {
 #ifdef QT_DEBUG
+#ifdef Q_OS_WIN
   QCoreApplication::addLibraryPath("C:\\Users\\Aise\\Documents\\build-moniQ-msvc2013_64-Debug\\pingwin\\debug");
+#endif
+#ifdef Q_OS_LINUX
+  QCoreApplication::addLibraryPath("/home/aise/build-moniQ-Desktop_Qt_5_5_1_GCC_64bit-Debug/pinglin");
+#endif
 #else
   QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath());
 #endif
