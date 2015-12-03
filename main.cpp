@@ -2,6 +2,8 @@
 #include <QDebug>
 #include <QObject>
 #include <QProcess>
+#include <time.h>
+#include <stdlib.h>
 
 #include "networkdiscoverer.h"
 #include "objectinstances.h"
@@ -10,6 +12,8 @@ int main(int argc, char *argv[])
 {
   qRegisterMetaType<QString>("QString");
   QCoreApplication a(argc, argv);
+
+  srand(time(NULL));
 
   ObjectInstances::commandServer.start();
   QString database_user = QString(ObjectInstances::databaseCredentials.value("database_user", "").toByteArray());

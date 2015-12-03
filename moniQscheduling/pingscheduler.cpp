@@ -11,7 +11,7 @@ PingScheduler::PingScheduler(QObject *parent) : QObject(parent)
   QCoreApplication::addLibraryPath("C:\\Users\\Aise\\Documents\\build-moniQ-msvc2013_64-Debug\\pingwin\\debug");
 #endif
 #ifdef Q_OS_LINUX
-  QCoreApplication::addLibraryPath("/home/aise/build-moniQ-Desktop_Qt_5_5_1_GCC_64bit-Debug/pinglin");
+  QCoreApplication::addLibraryPath("/home/aise/build-moniQ-Qt_5_5_1_gcc_64-Debug/pinglin");
 #endif
 #else
   QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath());
@@ -61,7 +61,7 @@ void PingScheduler::schedulePing(QString ip_address, bool monitoring)
 void PingScheduler::processPingResult(QString ipAddress, int result, bool monitoring)
 {
   QTextStream cout(stdout);
-
+cout << "PINGRESULT:" << ipAddress << ";" << result << ";" << monitoring << endl;
   if (monitoring)
   {
     if (result == 0)
@@ -74,12 +74,12 @@ void PingScheduler::processPingResult(QString ipAddress, int result, bool monito
       // reschedule according to down schedule
       ObjectInstances2::scheduler.addHostToSchedule(ipAddress, false);
     }
-    cout << "PINGRESULT:" << ipAddress << ";" << result << monitoring << endl;
+
     ObjectInstances2::processController.messageAnalyzer("PINGRESULT:" + ipAddress + ";" + QString::number(result));
   }
   else
   {
-    QTextStream cout(stdout);
+
     cout << "PINGRESULT:" << ipAddress << ";" << result << endl;
     //emit sendPingResult(ipAddress, result);
   }

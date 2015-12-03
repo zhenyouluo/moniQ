@@ -19,11 +19,11 @@ int main(int argc, char *argv[])
 
   ObjectInstances2::database.start(database_user, database_password);
 
-  cout << "OUT:Scheduling process started" << endl;
+  cout << "OUT:Scheduling process started2" << endl;
   ObjectInstances2::scheduler.start();
-
+cout << "OUT:start processes" << endl;
   ObjectInstances2::processController.startProcesses();
-
+cout << "OUT:start processes" << endl;
   QTimer::singleShot(0, &ObjectInstances2::pingScheduler, SLOT(connectPingers()));
   QTimer::singleShot(0, &ObjectInstances2::scheduler, SLOT(scheduleNextSeconds()));
   return a.exec();

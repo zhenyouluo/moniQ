@@ -14,7 +14,13 @@ bool ProcessController::startProcesses()
   connect(this, &ProcessController::endProcess, schedulingProcess, &QProcess::kill);
   connect(schedulingProcess, &QProcess::readyReadStandardOutput, this, &ProcessController::dataFromScheduler);
 #ifdef QT_DEBUG
+#ifdef Q_OS_WIN
   schedulingProcess->start("C:\\Users\\Aise\\Documents\\build-moniQ-msvc2013_64-Debug\\moniQscheduling\\debug\\moniQscheduling.exe");
+#endif
+#ifdef Q_OS_LINUX
+  schedulingProcess->start("/home/aise/build-moniQ-Qt_5_5_1_gcc_64-Debug/moniQscheduling/moniQscheduling");
+  qDebug() << "/home/aise/build-moniQ-Desktop_Qt_5_5_1_GCC_64bit-Debug/moniQscheduling/moniQscheduling";
+#endif
 #else
   schedulingProcess->start("\"" + QCoreApplication::applicationDirPath() + "\\moniQscheduling.exe\"");
   QTextStream out(stdout);
