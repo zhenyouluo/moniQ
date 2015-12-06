@@ -13,6 +13,7 @@ private:
   QHash<QString, int> hostsCriticalLevels;
   QHash<QString, QString> hostStates;
   QHash<QString, int> hostMissedPings;
+  QHash<QString, QString> hostNames;
 
 public:
   explicit Analyzing(QObject *parent = 0);

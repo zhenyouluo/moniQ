@@ -24,8 +24,9 @@ public:
   QHash<QString, int> getHostsCriticalLevels();
   QHash<QString, QString> getHostsStates();
   QHash<QString, int> getHostsMissedPings();
+  QHash<QString, QString> getHostnames();
   void updateMissedPings(QString ipv4, int missed_pings);
-  void updateState(QString ipv4, QString current_state);
+  void updateState(QString host, QString current_state);
 
 signals:
 

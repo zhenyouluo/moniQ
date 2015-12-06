@@ -38,12 +38,12 @@ void PingScheduler::connectPingers()
   }
 }
 
-void PingScheduler::schedulePing(QString ip_address, bool monitoring)
+void PingScheduler::schedulePing(QString ip_address, bool monitoring, bool pingnow)
 {
   int freeThread = getFreeThread();
   if (freeThread >= 0)
   {
-    pingthreadcontrols[freeThread].startPing(ip_address, monitoring);
+    pingthreadcontrols[freeThread].startPing(ip_address, monitoring, pingnow);
   }
   else
   {
@@ -58,23 +58,26 @@ void PingScheduler::schedulePing(QString ip_address, bool monitoring)
   }
 }
 
-void PingScheduler::processPingResult(QString ipAddress, int result, bool monitoring)
+void PingScheduler::processPingResult(QString ipAddress, int result, bool monitoring, bool pingnow)
 {
   QTextStream cout(stdout);
 cout << "PINGRESULT:" << ipAddress << ";" << result << ";" << monitoring << endl;
   if (monitoring)
   {
-    if (result == 0)
+    if (!pingnow)
     {
-      // reschedule according to up schedule
-      ObjectInstances2::scheduler.addHostToSchedule(ipAddress, true);
+      // reschedule ping
+      if (result == 0)
+      {
+        // reschedule according to up schedule
+        ObjectInstances2::scheduler.addHostToSchedule(ipAddress, true);
+      }
+      else
+      {
+        // reschedule according to down schedule
+        ObjectInstances2::scheduler.addHostToSchedule(ipAddress, false);
+      }
     }
-    else
-    {
-      // reschedule according to down schedule
-      ObjectInstances2::scheduler.addHostToSchedule(ipAddress, false);
-    }
-
     ObjectInstances2::processController.messageAnalyzer("PINGRESULT:" + ipAddress + ";" + QString::number(result));
   }
   else
@@ -83,21 +86,35 @@ cout << "PINGRESULT:" << ipAddress << ";" << result << ";" << monitoring << endl
     cout << "PINGRESULT:" << ipAddress << ";" << result << endl;
     //emit sendPingResult(ipAddress, result);
   }
-  int free_thread = getFreeThread();
-  if (free_thread >= 0)
+  bool ready = false;
+  while (!ready)
   {
-    if (!monitor_queue.isEmpty())
+    int free_thread = getFreeThread();
+    if (free_thread >= 0)
     {
-      QString ip_address =  monitor_queue.dequeue();
-      pingthreadcontrols[free_thread].startPing(ip_address, true);
+      if (!monitor_queue.isEmpty())
+      {
+        QString ip_address =  monitor_queue.dequeue();
+        pingthreadcontrols[free_thread].startPing(ip_address, true, false);
+      }
+      else
+      {
+        if (!discover_queue.isEmpty())
+        {
+          QString ip_address =  discover_queue.dequeue();
+          pingthreadcontrols[free_thread].startPing(ip_address, false, false);
+        }
+        else
+        {
+          // no more waiting pings
+          ready = true;
+        }
+      }
     }
     else
     {
-      if (!discover_queue.isEmpty())
-      {
-        QString ip_address =  discover_queue.dequeue();
-        pingthreadcontrols[free_thread].startPing(ip_address, false);
-      }
+      // no more free threads
+      ready = true;
     }
   }
 }

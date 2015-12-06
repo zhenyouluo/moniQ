@@ -17,6 +17,7 @@ class PingThreadControl : public QObject
 private:
   bool thread_available;
   bool monitoringPing;
+  bool pingNow;
   QString ipAddress;
   QThread thread;
   Pinger* pinger;
@@ -26,7 +27,7 @@ private:
 
 public:
   explicit PingThreadControl(QObject *parent = 0);
-  void startPing(QString ip_address, bool monitoring);
+  void startPing(QString ip_address, bool monitoring, bool pingnow);
   bool isAvailable();
   void connectPinger();
 

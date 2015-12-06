@@ -14,8 +14,8 @@ class PingScheduler : public QObject
 public:
   explicit PingScheduler(QObject *parent = 0);
   int getFreeThread();
-  void schedulePing(QString ip_address, bool monitoring);
-  void processPingResult(QString ipAddress, int result, bool monitoring);
+  void schedulePing(QString ip_address, bool monitoring, bool pingnow);
+  void processPingResult(QString ipAddress, int result, bool monitoring, bool pingnow);
 
 
 private:

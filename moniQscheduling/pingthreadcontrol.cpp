@@ -19,10 +19,11 @@ void PingThreadControl::connectPinger()
   thread.start();
 }
 
-void PingThreadControl::startPing(QString ip_address, bool monitoring)
+void PingThreadControl::startPing(QString ip_address, bool monitoring, bool pingnow)
 {
   ipAddress = ip_address;
   monitoringPing = monitoring;
+  pingNow = pingnow;
   failureCounter = 0;
   thread_available = false;
   emit initPing(ip_address);
@@ -33,7 +34,7 @@ void PingThreadControl::processPingResult(int result)
   if ((result == 0) || (failureCounter > 4))
   {
     thread_available = true;
-    ObjectInstances2::pingScheduler.processPingResult(ipAddress, result, monitoringPing);
+    ObjectInstances2::pingScheduler.processPingResult(ipAddress, result, monitoringPing, pingNow);
     return;
   }
   failureCounter++;

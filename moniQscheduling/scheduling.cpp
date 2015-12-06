@@ -21,6 +21,7 @@ void Scheduling::start()
 
   hostsUpCheckIntervals = ObjectInstances2::database.getHostsCheckIntervals(true);
   hostsDownCheckIntervals = ObjectInstances2::database.getHostsCheckIntervals(false);
+  hostNames = ObjectInstances2::database.getHostnames();
 
   // timestamp: utc seconds since epoch
   qint64 now = QDateTime::currentMSecsSinceEpoch() / 1000;
@@ -44,6 +45,12 @@ void Scheduling::start()
 
 void Scheduling::addHostToSchedule(QString ipv4, bool up)
 {
+  // check if ip address still in host list
+  if (!hostNames.contains(ipv4))
+  {
+    return;
+  }
+
   qint64 now = QDateTime::currentMSecsSinceEpoch() / 1000;
   int interval;
   if (up)
@@ -56,7 +63,7 @@ void Scheduling::addHostToSchedule(QString ipv4, bool up)
   }
   QTextStream cout(stdout);
 
-  cout << "intreval: " << interval << endl;
+  cout << "interval: " << interval << endl;
   if (interval != -1)
   {
     pingSchedule.insert(now + interval, ipv4);
@@ -90,7 +97,7 @@ void Scheduling::startPing()
   if (!pingSchedule.isEmpty())
   {
     QString ipv4 = pingSchedule.take(pingSchedule.firstKey());
-    ObjectInstances2::pingScheduler.schedulePing(ipv4, true);
+    ObjectInstances2::pingScheduler.schedulePing(ipv4, true, false);
   }
 }
 
@@ -100,8 +107,34 @@ void Scheduling::processStdin(QString message)
   QTextStream cout(stdout);
 
   cout << "on sched read from stdin: " << message << endl;
-  if (message.left(5) == "PING:")
+  if (message.left(5) == "PING:") // discovering hosts
   {
-    ObjectInstances2::pingScheduler.schedulePing(message.remove(0,5), false);
+    ObjectInstances2::pingScheduler.schedulePing(message.remove(0,5), false, false);
+    return;
+  }
+  if (message.left(8) == "PINGNOW:") // monitoring hosts
+  {
+    ObjectInstances2::pingScheduler.schedulePing(message.remove(0,8), true, true);
+    return;
+  }
+  if (message.left(8) == "ADDHOST:")
+  {
+    QString hostdetails = message.remove(0,8);
+    QStringList parts = hostdetails.split(";");
+    if (parts.length() > 1)
+    {
+      //QString host = parts[0];
+      QString ipv4 = parts[1];
+
+      // update host data from database
+      hostsUpCheckIntervals = ObjectInstances2::database.getHostsCheckIntervals(true);
+      hostsDownCheckIntervals = ObjectInstances2::database.getHostsCheckIntervals(false);
+      hostNames = ObjectInstances2::database.getHostnames();
+
+      // add new host to schedule
+      addHostToSchedule(ipv4, true);
+
+      ObjectInstances2::processController.messageAnalyzer("HOSTS_UPDATED");
+    }
   }
 }

@@ -262,7 +262,34 @@ QString CommandServer::respondToCommand(QWebSocket *pClient, QString command, QS
       return "ERROR: IP address not valid.";
     }
     ObjectInstances::database.addHost(arguments[1], arguments[2]);
+    ObjectInstances::processController.messageScheduler("ADDHOST:" + arguments[1] + ";" + arguments[2]);
     ObjectInstances::commandServer.broadCast("HOSTLIST UPDATED");
+    return "";
+  }
+  if (command == "HOST2IP")
+  {
+    if (arguments.length() < 2)
+    {
+      return "ERROR: Please supply hostname.";
+    }
+    //QHostInfo::lookupHost(arguments[1], this, SLOT(host2ip(QHostInfo)));
+    new resolver(this, pclient)
+        resolve(host)
+        hier een slot resolve_answer(answer, pclient) in slot resolver.deleteLater();
+    return "";
+  }
+  if (command == "PINGNOW")
+  {
+    if (arguments.length() < 2)
+    {
+      return "ERROR: Please supply IP address.";
+    }
+    Ipv4_Address* ip_address = new Ipv4_Address(arguments[1]);
+    if (!ip_address->isValid())
+    {
+      return "ERROR: IP address not valid.";
+    }
+    ObjectInstances::processController.messageScheduler("PINGNOW:"+arguments[1]);
     return "";
   }
   if (command == "RESTART")

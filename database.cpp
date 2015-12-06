@@ -26,8 +26,17 @@ void Database::addHost(QString host, QString ipAddress)
   {
     QSqlQuery query;
     query.exec("DELETE FROM hosts WHERE ipv4='" + ipAddress + "'");
-    query.exec("INSERT INTO hosts (hostname, ipv4) VALUES ('" + host + "','" + ipAddress + "')"); 
-    query.exec("INSERT INTO host_state_history (ipv4, state, time) VALUES ('" + ipAddress + "','normal','" + QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss") + "')");
+    query.exec("SELECT * FROM hosts WHERE hostname = '" + host + "';");
+    if (query.next())
+    {
+      // host already exists with a different ip address
+      query.exec("UPDATE `hosts` SET `ipv4`='" + ipAddress + "' WHERE hostname = '" + host + "';");
+    }
+    else
+    {
+      query.exec("INSERT INTO hosts (hostname, ipv4) VALUES ('" + host + "','" + ipAddress + "')");
+    }
+    query.exec("INSERT INTO host_state_history (host, state, time) VALUES ('" + ipAddress + "','normal','" + QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss") + "')");
   }
 }
 
@@ -80,6 +89,22 @@ QHash<QString, int> Database::getHostsCheckIntervals(bool up)
     }
   }
   return intervals;
+}
+
+QHash<QString, QString> Database::getHostnames()
+{
+  QHash<QString, QString> hostnames;
+  if (connected)
+  {
+    QSqlQuery query("SELECT * FROM hosts;");
+    int ipv4field = query.record().indexOf("ipv4");
+    int namefield = query.record().indexOf("hostname");
+    while (query.next())
+    {
+      hostnames.insert(query.value(ipv4field).toString(), query.value(namefield).toString());
+    }
+  }
+  return hostnames;
 }
 
 QHash<QString, int> Database::getHostsWarninglevels()
@@ -165,8 +190,8 @@ void Database::updateMissedPings(QString ipv4, int missed_pings)
   QSqlQuery query("UPDATE `hosts` SET `missed_pings`=" + QString::number(missed_pings) + " WHERE ipv4='" + ipv4 + "';");
 }
 
-void Database::updateState(QString ipv4, QString current_state)
+void Database::updateState(QString host, QString current_state)
 {
-  QSqlQuery query("UPDATE `hosts` SET `state`='" + current_state + "' WHERE ipv4='" + ipv4 + "';");
-  QSqlQuery query2("INSERT INTO `host_state_history`(`ipv4`, `state`, `time`) VALUES ('" + ipv4 + "','" + current_state + "','" + QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss") + "')");
+  QSqlQuery query("UPDATE `hosts` SET `state`='" + current_state + "' WHERE hostname='" + host + "';");
+  QSqlQuery query2("INSERT INTO `host_state_history`(`hostname`, `state`, `time`) VALUES ('" + host + "','" + current_state + "','" + QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss") + "')");
 }

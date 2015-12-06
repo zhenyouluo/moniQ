@@ -13,6 +13,7 @@ private:
   QMultiMap<quint64, QString> pingSchedule;
   QHash<QString, int> hostsUpCheckIntervals;
   QHash<QString, int> hostsDownCheckIntervals;
+  QHash<QString, QString> hostNames;
 
 public:
   explicit Scheduling(QObject *parent = 0);

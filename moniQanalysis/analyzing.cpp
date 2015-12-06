@@ -19,6 +19,7 @@ void Analyzing::start()
   hostsCriticalLevels = ObjectInstances2::database.getHostsCriticalLevels();
   hostStates = ObjectInstances2::database.getHostsStates();
   hostMissedPings = ObjectInstances2::database.getHostsMissedPings();
+  hostNames = ObjectInstances2::database.getHostnames();
 }
 
 void Analyzing::processStdin(QString message)
@@ -61,9 +62,23 @@ void Analyzing::processStdin(QString message)
       if (prev_state != current_state)
       {
         hostStates.insert(ipv4, current_state);
-        // new state to database
-        ObjectInstances2::database.updateState(ipv4, current_state);
+
+        if (hostNames.contains(ipv4))
+        {
+          // new state to database
+          ObjectInstances2::database.updateState(hostNames.value(ipv4), current_state);
+        }
       }
     }
+    return;
+  }
+  if (message == "HOSTS_UPDATED")
+  {
+    // reread hostdata from database
+    hostsWarningLevels = ObjectInstances2::database.getHostsWarninglevels();
+    hostsCriticalLevels = ObjectInstances2::database.getHostsCriticalLevels();
+    hostStates = ObjectInstances2::database.getHostsStates();
+    hostMissedPings = ObjectInstances2::database.getHostsMissedPings();
+    hostNames = ObjectInstances2::database.getHostnames();
   }
 }
