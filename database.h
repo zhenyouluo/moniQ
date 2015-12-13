@@ -17,6 +17,8 @@ public:
   explicit Database(QObject *parent = 0);
   void start(QString user, QString password);
   void addHost(QString host, QString ipAddress);
+  void addFullHost(QString host, QString ipAddress, QString tmpl);
+  void deleteHost(QString host);
   bool moniqCredentialsSet();
   bool checkCredentials(QString user, QString password);
   QHash<QString, int> getHostsCheckIntervals(bool up);

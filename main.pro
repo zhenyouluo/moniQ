@@ -25,7 +25,8 @@ SOURCES += main.cpp \
     objectinstances.cpp \
     commandserver.cpp \
     database.cpp \
-    processcontroller.cpp
+    processcontroller.cpp \
+    resolver.cpp
 
 HEADERS += \
     networkdiscoverer.h \
@@ -34,7 +35,8 @@ HEADERS += \
     objectinstances.h \
     commandserver.h \
     database.h \
-    processcontroller.h
+    processcontroller.h \
+    resolver.h
 
 DISTFILES +=
 

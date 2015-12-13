@@ -6,6 +6,7 @@
 #include "commandserver.h"
 #include "objectinstances.h"
 #include "ipv4_address.h"
+#include "resolver.h"
 
 QT_USE_NAMESPACE
 
@@ -266,16 +267,51 @@ QString CommandServer::respondToCommand(QWebSocket *pClient, QString command, QS
     ObjectInstances::commandServer.broadCast("HOSTLIST UPDATED");
     return "";
   }
+  if (command == "ADDFULLHOST")
+  {
+    if (arguments.length() < 4)
+    {
+      return "ERROR: Please supply hostname, IP address and host template.";
+    }
+    Ipv4_Address* ip_address = new Ipv4_Address(arguments[2]);
+    if (!ip_address->isValid())
+    {
+      return "ERROR: IP address not valid.";
+    }
+    ObjectInstances::database.addFullHost(arguments[1], arguments[2], arguments[3]);
+    ObjectInstances::processController.messageScheduler("ADDHOST:" + arguments[1] + ";" + arguments[2]);
+    ObjectInstances::commandServer.broadCast("HOSTLIST UPDATED");
+    return "HOST ADDED";
+  }
+  if (command == "DELETEHOST")
+  {
+    if (arguments.length() < 2)
+    {
+      return "ERROR: Please supply hostname.";
+    }
+    ObjectInstances::database.deleteHost(arguments[1]);
+    ObjectInstances::processController.messageScheduler("DELETEHOST:" + arguments[1]);
+    ObjectInstances::commandServer.broadCast("HOSTLIST UPDATED");
+    return "";
+  }
   if (command == "HOST2IP")
   {
     if (arguments.length() < 2)
     {
       return "ERROR: Please supply hostname.";
     }
-    //QHostInfo::lookupHost(arguments[1], this, SLOT(host2ip(QHostInfo)));
-    new resolver(this, pclient)
-        resolve(host)
-        hier een slot resolve_answer(answer, pclient) in slot resolver.deleteLater();
+    Resolver* resolver = new Resolver(this);
+    resolver->host2Ip(arguments[1], pClient);
+    return "";
+  }
+  if (command == "IP2HOST")
+  {
+    if (arguments.length() < 2)
+    {
+      return "ERROR: Please supply ip address.";
+    }
+    Resolver* resolver = new Resolver(this);
+    resolver->ip2Host(arguments[1], pClient);
     return "";
   }
   if (command == "PINGNOW")

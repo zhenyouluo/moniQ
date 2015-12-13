@@ -1,3 +1,10 @@
+#include "pinger.h"
+
+Pinger::Pinger()
+{
+
+}
+
 #include <QTextStream>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -134,4 +141,3 @@ int Pinglin::ping(char *ip)
   }
   return -6;
 }
-

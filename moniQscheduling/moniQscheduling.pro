@@ -21,11 +21,17 @@ SOURCES += main.cpp \
     scheduling.cpp \
     objectinstances2.cpp \
     ../database.cpp \
-    pinger.cpp \
     pingscheduler.cpp \
     pingthreadcontrol.cpp \
     processcontroller.cpp
 
+win32 {
+  SOURCES += pinger_win32.cpp
+}
+
+unix {
+  SOURCES += pinger_unix.cpp
+}
 
 HEADERS += \
     stdinthread.h \
@@ -33,8 +39,11 @@ HEADERS += \
     objectinstances2.h \
     ../database.h \
     pinger.h \
-    pingerinterface.h \
     pingscheduler.h \
     pingthreadcontrol.h \
     processcontroller.h
 
+win32 {
+    LIBS +=  -lws2_32 \
+             -liphlpapi
+}

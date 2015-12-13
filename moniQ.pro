@@ -10,13 +10,3 @@ SUBDIRS += main.pro \
     moniQscheduling \
     moniQanalysis
 
-win32
-{
-  SUBDIRS +=pingwin
-  SUBDIRS -=pinglin
-}
-unix
-{
-  SUBDIRS +=pinglin
-  SUBDIRS -=pingwin
-}

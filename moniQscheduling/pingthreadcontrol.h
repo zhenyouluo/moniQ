@@ -6,7 +6,6 @@
 #include <QTimer>
 #include <QThread>
 
-#include "pingerinterface.h"
 #include "pinger.h"
 #include "../ipv4_address.h"
 

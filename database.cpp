@@ -35,8 +35,38 @@ void Database::addHost(QString host, QString ipAddress)
     else
     {
       query.exec("INSERT INTO hosts (hostname, ipv4) VALUES ('" + host + "','" + ipAddress + "')");
+      query.exec("INSERT INTO host_state_history (hostname, state, time) VALUES ('" + host + "','normal','" + QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss") + "')");
     }
-    query.exec("INSERT INTO host_state_history (host, state, time) VALUES ('" + ipAddress + "','normal','" + QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss") + "')");
+  }
+}
+
+void Database::addFullHost(QString host, QString ipAddress, QString tmpl)
+{
+  if (connected)
+  {
+    QSqlQuery query;
+    query.exec("DELETE FROM hosts WHERE ipv4='" + ipAddress + "'");
+    query.exec("SELECT * FROM hosts WHERE hostname = '" + host + "';");
+    if (query.next())
+    {
+      // host already exists with a different ip address
+      query.exec("UPDATE `hosts` SET `ipv4`='" + ipAddress + "',`template`='" + tmpl + "' WHERE hostname = '" + host + "';");
+    }
+    else
+    {
+      query.exec("INSERT INTO hosts (hostname, ipv4, template) VALUES ('" + host + "','" + ipAddress + "','" + tmpl + "')");
+      query.exec("INSERT INTO host_state_history (hostname, state, time) VALUES ('" + host + "','normal','" + QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss") + "')");
+    }
+  }
+}
+
+void Database::deleteHost(QString host)
+{
+  if (connected)
+  {
+    QSqlQuery query;
+    query.exec("DELETE FROM hosts WHERE hostname='" + host + "'");
+    query.exec("DELETE FROM host_state_history WHERE hostname='" + host + "'");
   }
 }
 
