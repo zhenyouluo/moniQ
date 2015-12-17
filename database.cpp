@@ -60,6 +60,16 @@ void Database::addFullHost(QString host, QString ipAddress, QString tmpl)
   }
 }
 
+void Database::updateHost(QString host, QString ipAddress, QString tmpl)
+{
+  if (connected)
+  {
+    QSqlQuery query;
+    query.exec("DELETE FROM hosts WHERE ipv4='" + ipAddress + "' AND hostname != '" + host + "'");
+    query.exec("UPDATE `hosts` SET `ipv4`='" + ipAddress + "',`template`='" + tmpl + "' WHERE hostname = '" + host + "';");
+  }
+}
+
 void Database::deleteHost(QString host)
 {
   if (connected)

@@ -267,6 +267,22 @@ QString CommandServer::respondToCommand(QWebSocket *pClient, QString command, QS
     ObjectInstances::commandServer.broadCast("HOSTLIST UPDATED");
     return "";
   }
+  if (command == "EDITHOST")
+  {
+    if (arguments.length() < 4)
+    {
+      return "ERROR: Please supply hostname and IP address.";
+    }
+    Ipv4_Address* ip_address = new Ipv4_Address(arguments[2]);
+    if (!ip_address->isValid())
+    {
+      return "ERROR: IP address not valid.";
+    }
+    ObjectInstances::database.updateHost(arguments[1], arguments[2], arguments[3]);
+    ObjectInstances::processController.messageScheduler("HOSTUPDATED");
+    ObjectInstances::commandServer.broadCast("HOSTLIST UPDATED");
+    return "HOST UPDATED";
+  }
   if (command == "ADDFULLHOST")
   {
     if (arguments.length() < 4)
@@ -290,7 +306,7 @@ QString CommandServer::respondToCommand(QWebSocket *pClient, QString command, QS
       return "ERROR: Please supply hostname.";
     }
     ObjectInstances::database.deleteHost(arguments[1]);
-    ObjectInstances::processController.messageScheduler("DELETEHOST:" + arguments[1]);
+    ObjectInstances::processController.messageScheduler("HOSTDELETED");
     ObjectInstances::commandServer.broadCast("HOSTLIST UPDATED");
     return "";
   }

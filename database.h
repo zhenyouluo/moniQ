@@ -18,6 +18,7 @@ public:
   void start(QString user, QString password);
   void addHost(QString host, QString ipAddress);
   void addFullHost(QString host, QString ipAddress, QString tmpl);
+  void updateHost(QString host, QString ipAddress, QString tmpl);
   void deleteHost(QString host);
   bool moniqCredentialsSet();
   bool checkCredentials(QString user, QString password);

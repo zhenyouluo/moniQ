@@ -137,4 +137,12 @@ void Scheduling::processStdin(QString message)
       ObjectInstances2::processController.messageAnalyzer("HOSTS_UPDATED");
     }
   }
+  if ((message == "HOSTDELETED") ||(message == "HOSTUPDATED"))
+  {
+    // update host data from database
+    hostsUpCheckIntervals = ObjectInstances2::database.getHostsCheckIntervals(true);
+    hostsDownCheckIntervals = ObjectInstances2::database.getHostsCheckIntervals(false);
+    hostNames = ObjectInstances2::database.getHostnames();
+    ObjectInstances2::processController.messageAnalyzer("HOSTS_UPDATED");
+  }
 }
