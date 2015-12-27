@@ -60,6 +60,31 @@ void Database::addFullHost(QString host, QString ipAddress, QString tmpl)
   }
 }
 
+bool Database::addHostTemplate(QString tmpl, QString up_interval, QString down_interval, QString warning_level, QString critical_level)
+{
+  if (connected)
+  {
+    QSqlQuery query;
+    query.exec("SELECT * FROM host_templates WHERE name = '" + tmpl + "'");
+    if (query.next())
+    {
+      // template already exists
+      return false;
+    }
+    query.exec("INSERT INTO host_templates (`name`, `check_interval_on_up`, `check_interval_on_down`, `missed_pings_warning_level`, `missed_pings_critical_level`) VALUES ('" + tmpl + "','" + up_interval + "','" + down_interval + "','" + warning_level + "','" + critical_level + "')");
+  }
+  return true;
+}
+
+void Database::editHostTemplate(QString tmpl, QString up_interval, QString down_interval, QString warning_level, QString critical_level)
+{
+  if (connected)
+  {
+    QSqlQuery query;
+    query.exec("UPDATE host_templates SET `check_interval_on_up`=" + up_interval + ", `check_interval_on_down`=" + down_interval + ", `missed_pings_warning_level`=" + warning_level + ", `missed_pings_critical_level`=" + critical_level + " WHERE name='" + tmpl + "';");
+  }
+}
+
 void Database::updateHost(QString host, QString ipAddress, QString tmpl)
 {
   if (connected)
@@ -68,6 +93,22 @@ void Database::updateHost(QString host, QString ipAddress, QString tmpl)
     query.exec("DELETE FROM hosts WHERE ipv4='" + ipAddress + "' AND hostname != '" + host + "'");
     query.exec("UPDATE `hosts` SET `ipv4`='" + ipAddress + "',`template`='" + tmpl + "' WHERE hostname = '" + host + "';");
   }
+}
+
+bool Database::deleteHostTemplate(QString tmpl)
+{
+  if (connected)
+  {
+    QSqlQuery query;
+    query.exec("SELECT * FROM hosts WHERE template = '" + tmpl + "'");
+    if (query.next())
+    {
+      // template in use
+      return false;
+    }
+    query.exec("DELETE FROM host_templates WHERE name='" + tmpl + "'");
+  }
+  return true;
 }
 
 void Database::deleteHost(QString host)

@@ -18,6 +18,9 @@ public:
   void start(QString user, QString password);
   void addHost(QString host, QString ipAddress);
   void addFullHost(QString host, QString ipAddress, QString tmpl);
+  bool addHostTemplate(QString tmpl, QString up_interval, QString down_interval, QString warning_level, QString critical_level);
+  void editHostTemplate(QString tmpl, QString up_interval, QString down_interval, QString warning_level, QString critical_level);
+  bool deleteHostTemplate(QString tmpl);
   void updateHost(QString host, QString ipAddress, QString tmpl);
   void deleteHost(QString host);
   bool moniqCredentialsSet();

@@ -81,7 +81,7 @@ void CommandServer::processMessage(QString message)
             }
             if (arglen < 1 || arglen > 500)
             {
-              pClient->sendTextMessage("ERROR: Invalid argument lenght.");
+              pClient->sendTextMessage("ERROR: Invalid argument length.");
               return;
             }
             QString arg = message.mid(pos2+1, arglen);
@@ -309,6 +309,44 @@ QString CommandServer::respondToCommand(QWebSocket *pClient, QString command, QS
     ObjectInstances::processController.messageScheduler("HOSTDELETED");
     ObjectInstances::commandServer.broadCast("HOSTLIST UPDATED");
     return "";
+  }
+  if (command == "DELETEHOSTTEMPLATE")
+  {
+    if (arguments.length() < 2)
+    {
+      return "ERROR: Please supply template name.";
+    }
+    if (ObjectInstances::database.deleteHostTemplate(arguments[1]))
+    {
+      ObjectInstances::commandServer.broadCast("HOSTTEMPLATELIST UPDATED");
+      return "";
+    }
+    return "ERROR: Template " + arguments[1] + " is still in use.";
+  }
+
+  if (command == "ADDHOSTTEMPLATE")
+  {
+    if (arguments.length() < 6)
+    {
+      return "ERROR: Please supply template name, 2 intervals and 2 levels.";
+    }
+    if (ObjectInstances::database.addHostTemplate(arguments[1], arguments[2], arguments[3], arguments[4], arguments[5]))
+    {
+      ObjectInstances::commandServer.broadCast("TEMPLATELIST UPDATED");
+      return "TEMPLATE ADDED";
+    }
+    return "ERROR: Template " + arguments[1] + " already exists.";
+  }
+  if (command == "EDITHOSTTEMPLATE")
+  {
+    if (arguments.length() < 6)
+    {
+      return "ERROR: Please supply template name, 2 intervals and 2 levels.";
+    }
+    ObjectInstances::database.editHostTemplate(arguments[1], arguments[2], arguments[3], arguments[4], arguments[5]);
+    ObjectInstances::processController.messageScheduler("TEMPLATE UPDATED");
+    ObjectInstances::commandServer.broadCast("TEMPLATELIST UPDATED");
+    return "TEMPLATE UPDATED";
   }
   if (command == "HOST2IP")
   {

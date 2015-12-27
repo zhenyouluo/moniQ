@@ -21,7 +21,6 @@ TEMPLATE = app
 SOURCES += main.cpp \
     networkdiscoverer.cpp \
     ipv4_address.cpp \
-    networkreader.cpp \
     objectinstances.cpp \
     commandserver.cpp \
     database.cpp \
@@ -31,7 +30,6 @@ SOURCES += main.cpp \
 HEADERS += \
     networkdiscoverer.h \
     ipv4_address.h \
-    networkreader.h \
     objectinstances.h \
     commandserver.h \
     database.h \

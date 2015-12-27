@@ -6,7 +6,7 @@
 
 #include "../database.h"
 #include "analyzing.h"
-
+#include "processcontroller.h"
 
 class ObjectInstances2 : public QObject
 {
@@ -16,6 +16,8 @@ public:
   static Database database;
   static QSettings databaseCredentials;
   static Analyzing analyzer;
+  static ProcessController processController;
+
 signals:
 
 public slots:

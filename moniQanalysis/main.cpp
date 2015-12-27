@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
   QString database_password = QString(ObjectInstances2::databaseCredentials.value("database_password", "").toByteArray());
 
   ObjectInstances2::database.start(database_user, database_password);
-
+  ObjectInstances2::processController.startProcesses();
   cout << "OUT:Analysis process started" << endl;
   ObjectInstances2::analyzer.start();
 

@@ -1,15 +1,15 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2015-11-22T11:25:40
+# Project created by QtCreator 2015-12-27T10:30:53
 #
 #-------------------------------------------------
 
 QT       += core
-
-QT       -= gui
+QT       += network
 QT       += sql
+QT       -= gui
 
-TARGET = moniQanalysis
+TARGET = moniQmetrics
 CONFIG   += console
 CONFIG   -= app_bundle
 
@@ -17,15 +17,11 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp \
+    networkreader.cpp \
     ../database.cpp \
-    objectinstances2.cpp \
-    analyzing.cpp \
-    stdinthread.cpp \
-    processcontroller.cpp
+    objectinstances.cpp
 
 HEADERS += \
+    networkreader.h \
     ../database.h \
-    objectinstances2.h \
-    analyzing.h \
-    stdinthread.h \
-    processcontroller.h
+    objectinstances.h

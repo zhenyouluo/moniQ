@@ -8,5 +8,6 @@ TEMPLATE = subdirs
 
 SUBDIRS += main.pro \
     moniQscheduling \
-    moniQanalysis
+    moniQanalysis \
+    moniQmetrics
 
