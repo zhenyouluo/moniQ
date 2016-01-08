@@ -60,9 +60,13 @@ void NetworkReader::readPendingDatagrams()
           quint64 ts = 0;
           for (int j = 0; j < 8; j++)
           {
-            ts = (ts * 256) + datagram.at(i+j);
+            qDebug() << datagram.at(i+j) << " " << (int) datagram.at(i+j) << " " << (unsigned char) datagram.at(i+j);
+
+            ts = (ts * 256) + (unsigned char) datagram.at(i+j);
+            qDebug() << "ts: " << ts;
           }
           QDateTime date = QDateTime::fromMSecsSinceEpoch(ts * 1000);
+          qDebug() << ts;
           qDebug() << date.toString("dd.MM.yyyy	hh:mm:ss");
           i = i + 8;
           if (i+1 < datagram.size())
@@ -73,16 +77,18 @@ void NetworkReader::readPendingDatagrams()
               case 1:
               {
                 qDebug() << "Disks";
-                int nr_of_bytes = processDiskData(datagram, i+1);
+                i++;
+                int nr_of_bytes = processDiskData(datagram, i);
                 i = i + nr_of_bytes;
                 break;
               }
               case 2:
               {
                 qDebug() << "Cpu";
+                i++;
                 if (i+2 < datagram.size())
                 {
-                  int perc1000 = datagram.at(i) * 256 + datagram.at(i+1);
+                  int perc1000 = (unsigned char) datagram.at(i) * 256 + (unsigned char) datagram.at(i+1);
                   qDebug() << perc1000;
                   i = i + 2;
                 }
@@ -95,9 +101,10 @@ void NetworkReader::readPendingDatagrams()
               case 3:
               {
                 qDebug() << "Mem";
+                i++;
                 if (i+2 < datagram.size())
                 {
-                  int perc1000 = datagram.at(i) * 256 + datagram.at(i+1);
+                  int perc1000 = (unsigned char) datagram.at(i) * 256 + (unsigned char) datagram.at(i+1);
                   qDebug() << perc1000;
                   i = i + 2;
                 }
@@ -128,44 +135,22 @@ int NetworkReader::processDiskData(QByteArray datagram, int offset)
   int i = offset;
   if (i < datagram.size())
   {
-    int disks = datagram.at(i);
-    i++;
-    for (int j=0; j < disks; j++)
+    if (i < datagram.size())
     {
-      if (i < datagram.size())
+      int namesize = datagram.at(i);
+      i++;
+      if (i+namesize < datagram.size())
       {
-        int namesize = datagram.at(i);
-        i++;
-        if (i+namesize < datagram.size())
+        qDebug() << datagram.mid(i, namesize);
+        i=i+namesize;
+        if (i+2 < datagram.size())
         {
-          qDebug() << datagram.mid(i, namesize);
-          i=i+namesize;
-          if (i+2 < datagram.size())
-          {
-            int perc1000 = datagram.at(i) * 256 + datagram.at(i+1);
-            qDebug() << perc1000;
-            i = i + 2;
-
-          }
-          else
-          {
-            return i-offset;
-          }
+          int perc1000 = (unsigned char) datagram.at(i) * 256 + (unsigned char) datagram.at(i+1);
+          qDebug() << perc1000;
+          i = i + 2;
         }
-        else
-        {
-          return i-offset;
-        }
-      }
-      else
-      {
-        return i-offset;
       }
     }
-    return i-offset;
   }
-  else
-  {
-    return 0;
-  }
+  return i-offset;
 }
